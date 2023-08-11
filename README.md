@@ -1,0 +1,2 @@
+# mssivimss-promotores
+CU075_RegistrarActividadPromotores_SIVIMSS CU015_GestionarPromotores_SIVIMSS

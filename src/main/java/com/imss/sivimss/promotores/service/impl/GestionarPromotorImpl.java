@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
-import java.util.logging.Level;
 
 import javax.xml.bind.DatatypeConverter;
 
@@ -225,5 +224,21 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 		DateFormat fecForma = new SimpleDateFormat("yyyy-MM-dd", new Locale("es", "MX"));
 		return fecForma.format(dateF);       
 	}
+
+		@Override
+		public Response<?> buscarPorNombre(DatosRequest request, Authentication authentication) throws IOException {
+			String datosJson = String.valueOf(request.getDatos().get("datos"));
+			FiltrosPromotorRequest filtros = gson.fromJson(datosJson, FiltrosPromotorRequest.class);
+		    	UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+		        if(filtros.getNomPromotor()==null) {
+		        	 logUtil.crearArchivoLog(Level.WARNING.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"INFORMACION INCOMPLETA", CONSULTA, authentication, usuario);
+					 throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
+		        }
+		    	Response<?> response = providerRestTemplate.consumirServicio(promotores.buscarPromotorPorNombre(request, filtros.getNomPromotor()).getDatos(), urlConsulta,
+					authentication);
+		        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"BUSCAR PROMOTOR POR NOMBRE", CONSULTA, authentication, usuario);
+			return response;
+		
+		}
 
 }

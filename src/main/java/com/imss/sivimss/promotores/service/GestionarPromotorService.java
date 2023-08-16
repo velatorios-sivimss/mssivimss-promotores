@@ -23,4 +23,6 @@ public interface GestionarPromotorService {
 	
 	Response<?> cambiarEstatus(DatosRequest request, Authentication authentication) throws IOException;
 
+	Response<?> buscarPorNombre(DatosRequest request, Authentication authentication) throws IOException;
+
 }

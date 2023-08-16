@@ -12,6 +12,7 @@ import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
 
+import com.imss.sivimss.promotores.exception.BadRequestException;
 import com.imss.sivimss.promotores.model.request.FiltrosPromotorRequest;
 import com.imss.sivimss.promotores.model.request.PromotorRequest;
 import com.imss.sivimss.promotores.util.AppConstantes;
@@ -328,6 +329,27 @@ public class GestionarPromotor {
 			parametro.put(AppConstantes.QUERY, encoded);
 			request.setDatos(parametro);
 			return request;	
+	}
+	
+	
+	public DatosRequest buscarPromotorPorNombre(DatosRequest request, String nomPromotor) {
+		 Map<String, Object> parametro = new HashMap<>();
+	        SelectQueryUtil queryUtil = new SelectQueryUtil();
+	        queryUtil.select("PROM.ID_PROMOTOR AS idPromotor",
+	        		"CONCAT(PROM.NOM_PROMOTOR,' ', " 
+	        		+"PROM.NOM_PAPELLIDO, ' ', "
+	                        +"PROM.NOM_SAPELLIDO) AS nomPromotor")
+	                .from("SVT_PROMOTOR PROM");
+	        queryUtil.where("CONCAT(PROM.NOM_PROMOTOR,' ', "
+	        		+ "PROM.NOM_PAPELLIDO,' ', "
+	        		+ "PROM.NOM_SAPELLIDO) LIKE" +"'%"+nomPromotor +"%'");
+	        queryUtil.groupBy("PROM.NOM_PROMOTOR, PROM.NOM_PAPELLIDO , PROM.NOM_SAPELLIDO");
+	        String query = obtieneQuery(queryUtil);
+	        String encoded = encodedQuery(query);
+	        parametro.put(AppConstantes.QUERY, encoded);
+	        request.getDatos().remove(AppConstantes.DATOS);
+	        request.setDatos(parametro);
+	        return request;
 	}
 
 

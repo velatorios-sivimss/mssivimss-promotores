@@ -332,19 +332,27 @@ public class GestionarPromotor {
 	}
 	
 	
-	public DatosRequest buscarPromotorPorNombre(DatosRequest request, String nomPromotor) {
+	public DatosRequest buscarPromotorPorNombre(DatosRequest request, FiltrosPromotorRequest filtros ) {
 		 Map<String, Object> parametro = new HashMap<>();
 	        SelectQueryUtil queryUtil = new SelectQueryUtil();
 	        queryUtil.select("PROM.ID_PROMOTOR AS idPromotor",
 	        		"CONCAT(PROM.NOM_PROMOTOR,' ', " 
 	        		+"PROM.NOM_PAPELLIDO, ' ', "
 	                        +"PROM.NOM_SAPELLIDO) AS nomPromotor")
-	                .from("SVT_PROMOTOR PROM");
+	                .from("SVT_PROMOTOR PROM")
+	                .join("SVC_VELATORIO SV ", "PROM.ID_VELATORIO = SV.ID_VELATORIO");
 	        queryUtil.where("CONCAT(PROM.NOM_PROMOTOR,' ', "
 	        		+ "PROM.NOM_PAPELLIDO,' ', "
-	        		+ "PROM.NOM_SAPELLIDO) LIKE" +"'%"+nomPromotor +"%'");
+	        		+ "PROM.NOM_SAPELLIDO) LIKE" +"'%"+filtros.getNomPromotor() +"%'");
+	    	if(filtros.getIdDelegacion()!=null) {
+				queryUtil.where("SV.ID_DELEGACION = "+ filtros.getIdDelegacion() + "");
+			}
+			if(filtros.getIdVelatorio()!=null){
+				queryUtil.where("PROM.ID_VELATORIO = " + filtros.getIdVelatorio() + "");	
+			}
 	        queryUtil.groupBy("PROM.NOM_PROMOTOR, PROM.NOM_PAPELLIDO , PROM.NOM_SAPELLIDO");
 	        String query = obtieneQuery(queryUtil);
+	        log.info(query);
 	        String encoded = encodedQuery(query);
 	        parametro.put(AppConstantes.QUERY, encoded);
 	        request.getDatos().remove(AppConstantes.DATOS);

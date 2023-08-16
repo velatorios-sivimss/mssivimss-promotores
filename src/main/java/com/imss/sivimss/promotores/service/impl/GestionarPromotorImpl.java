@@ -234,7 +234,7 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 		        	 logUtil.crearArchivoLog(Level.WARNING.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"INFORMACION INCOMPLETA", CONSULTA, authentication, usuario);
 					 throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 		        }
-		    	Response<?> response = providerRestTemplate.consumirServicio(promotores.buscarPromotorPorNombre(request, filtros.getNomPromotor()).getDatos(), urlConsulta,
+		    	Response<?> response = providerRestTemplate.consumirServicio(promotores.buscarPromotorPorNombre(request, filtros).getDatos(), urlConsulta,
 					authentication);
 		        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"BUSCAR PROMOTOR POR NOMBRE", CONSULTA, authentication, usuario);
 			return response;

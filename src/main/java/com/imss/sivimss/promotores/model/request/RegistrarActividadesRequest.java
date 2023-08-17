@@ -1,7 +1,5 @@
 package com.imss.sivimss.promotores.model.request;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 
 import lombok.AllArgsConstructor;
@@ -18,11 +16,17 @@ import lombok.Setter;
 @JsonIgnoreType(value = true)
 public class RegistrarActividadesRequest {
 	
-	private Integer idFormato;
-	private Integer idVelatorio;
-	private String folio;
-	private String fecInicio;
-	private String fecFin;
-	private List<Actividades> actividades;
-	
+	private Integer idRegistro;
+	private String hrInicio;
+	private String hrFin;
+	private Integer idPromotor;
+	private String nomPromotor;
+	private Integer numPlaticas;
+	private String unidadImss;
+	private String empresa;
+	private String actividadRealizada;
+	private String observaciones;
+	private Integer evidencia;
+
+
 }

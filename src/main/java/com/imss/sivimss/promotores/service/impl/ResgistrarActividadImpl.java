@@ -19,8 +19,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.imss.sivimss.promotores.beans.GestionarPromotor;
 import com.imss.sivimss.promotores.beans.RegistrarActividad;
-import com.imss.sivimss.promotores.model.request.Actividades;
 import com.imss.sivimss.promotores.model.request.RegistrarActividadesRequest;
+import com.imss.sivimss.promotores.model.request.FiltrosPromotorActividadesRequest;
+import com.imss.sivimss.promotores.model.request.FiltrosPromotorRequest;
+import com.imss.sivimss.promotores.model.request.RegistrarFormatoActividadesRequest;
 import com.imss.sivimss.promotores.model.request.PromotorRequest;
 import com.imss.sivimss.promotores.model.request.UsuarioDto;
 import com.imss.sivimss.promotores.service.RegistrarActividadService;
@@ -70,6 +72,22 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 	@Autowired
 	private ModelMapper modelMapper;
 	
+	
+	@Override
+	public Response<?> buscarFormatoActividades(DatosRequest request, Authentication authentication) throws IOException {
+		String datosJson = String.valueOf(request.getDatos().get("datos"));
+		FiltrosPromotorActividadesRequest filtros = gson.fromJson(datosJson, FiltrosPromotorActividadesRequest.class);
+		 Integer pagina = Integer.valueOf(Integer.parseInt(request.getDatos().get("pagina").toString()));
+	        Integer tamanio = Integer.valueOf(Integer.parseInt(request.getDatos().get("tamanio").toString()));
+	        filtros.setTamanio(tamanio.toString());
+	        filtros.setPagina(pagina.toString());
+	    	UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+	        Response<?> response = providerRestTemplate.consumirServicio(registrarActividad.buscarFormatoActividades(request, filtros, fecFormat).getDatos(), urlPaginado,
+				authentication);
+	        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"CONSULTA FORMATO REGISTRO DE ACTIVIDADES OK", CONSULTA, authentication, usuario);
+		return response;
+	}
+
 
 	@Override
 	public Response<?> agregarRegistroActividades(DatosRequest request, Authentication authentication)
@@ -78,7 +96,7 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 		 //JsonParser parser = new JsonParser();
 	     //JsonObject jO = (JsonObject) parser.parse((String) request.getDatos().get(AppConstantes.DATOS));
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
-		RegistrarActividadesRequest actividadesRequest =  gson.fromJson(datosJson, RegistrarActividadesRequest.class);	
+		RegistrarFormatoActividadesRequest actividadesRequest =  gson.fromJson(datosJson, RegistrarFormatoActividadesRequest.class);	
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		registrarActividad=new RegistrarActividad(actividadesRequest);
 		registrarActividad.setIdUsuario(usuario.getIdUsuario());
@@ -103,5 +121,4 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 				throw new IOException("5", e.getCause()) ;
 			}
 	}
-
 }

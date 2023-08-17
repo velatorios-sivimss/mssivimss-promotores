@@ -38,14 +38,23 @@ public class ResgistrarActividadController {
 	@Autowired
 	private RegistrarActividadService registrarActividad;
 	
+	
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	@PostMapping("/buscar")
+	public CompletableFuture<?> buscarFormatoActividadesPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException{
+		Response<?> response = registrarActividad.buscarFormatoActividades(request,authentication);
+		return CompletableFuture
+				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+	}	
+	
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	@PostMapping("/agregar")
 	public CompletableFuture<?> insertarAtividadesPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException{
-		
 		Response<?> response = registrarActividad.agregarRegistroActividades(request,authentication);
-		log.info("estoy en controller ");
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
       

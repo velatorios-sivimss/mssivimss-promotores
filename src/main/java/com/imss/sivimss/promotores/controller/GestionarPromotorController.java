@@ -32,11 +32,9 @@ public class GestionarPromotorController {
 	@Autowired
 	private ProviderServiceRestTemplate providerRestTemplate;
 
-	
     @Autowired
 	private GestionarPromotorService gestionarPromotoresService;
     
-
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")

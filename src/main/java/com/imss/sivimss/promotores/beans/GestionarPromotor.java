@@ -85,7 +85,7 @@ public class GestionarPromotor {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("PR.ID_PROMOTOR AS idPromotor",
 				"PR.NUM_EMPLEDO AS numEmpleado",
-				"PR.DES_CURP AS curp",
+				"PR.CVE_CURP AS curp",
 				"PR.NOM_PROMOTOR AS nombre",
 				"PR.NOM_PAPELLIDO AS primerApellido",
 				"PR.NOM_SAPELLIDO AS segundoApellido",
@@ -136,7 +136,7 @@ public class GestionarPromotor {
 		queryUtil.select("PR.ID_PROMOTOR AS idPromotor",
 				"PR.NUM_EMPLEDO AS numEmpleado",
 				"SV.ID_VELATORIO AS idVelatorio",
-				"PR.DES_CURP AS curp",
+				"PR.CVE_CURP AS curp",
 				"PR.NOM_PROMOTOR AS nombre",
 				"PR.NOM_PAPELLIDO AS primerApellido",
 				"PR.NOM_SAPELLIDO AS segundoApellido",
@@ -188,7 +188,7 @@ public class GestionarPromotor {
 		DatosRequest request = new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
 		final QueryHelper q = new QueryHelper("INSERT INTO SVT_PROMOTOR");
-		q.agregarParametroValues("DES_CURP", "'" + this.desCurp + "'");
+		q.agregarParametroValues("CVE_CURP", "'" + this.desCurp + "'");
 		q.agregarParametroValues("NOM_PROMOTOR", setValor(this.nomPromotor));
 		q.agregarParametroValues("NOM_PAPELLIDO", setValor(this.aPaterno));
 		q.agregarParametroValues("NOM_SAPELLIDO", setValor(this.aMaterno));
@@ -254,9 +254,9 @@ public class GestionarPromotor {
 		DatosRequest request= new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
-		queryUtil.select("DES_CURP")
+		queryUtil.select("CVE_CURP")
 		.from("SVT_PROMOTOR" );
-		queryUtil.where("DES_CURP = :curp")
+		queryUtil.where("CVE_CURP = :curp")
 		.setParameter("curp", curp);
 		String query = obtieneQuery(queryUtil);
 		log.info("valida " +query);

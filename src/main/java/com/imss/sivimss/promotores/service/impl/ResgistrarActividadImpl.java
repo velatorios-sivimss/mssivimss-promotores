@@ -20,7 +20,7 @@ import com.google.gson.JsonParser;
 import com.imss.sivimss.promotores.beans.GestionarPromotor;
 import com.imss.sivimss.promotores.beans.RegistrarActividad;
 import com.imss.sivimss.promotores.model.request.Actividades;
-import com.imss.sivimss.promotores.model.request.ActividadesRequest;
+import com.imss.sivimss.promotores.model.request.RegistrarActividadesRequest;
 import com.imss.sivimss.promotores.model.request.PromotorRequest;
 import com.imss.sivimss.promotores.model.request.UsuarioDto;
 import com.imss.sivimss.promotores.service.RegistrarActividadService;
@@ -70,35 +70,33 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	@SuppressWarnings("unchecked")
+
 	@Override
 	public Response<?> agregarRegistroActividades(DatosRequest request, Authentication authentication)
 			throws IOException {
-		log.info("-> "+request.toString());
 		Response<?> response = new Response<>();
 		 //JsonParser parser = new JsonParser();
 	     //JsonObject jO = (JsonObject) parser.parse((String) request.getDatos().get(AppConstantes.DATOS));
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
-		
-
-		ActividadesRequest actividadesRequest =  gson.fromJson(datosJson, ActividadesRequest.class);	
-		log.info("estoy aqui "+actividadesRequest.toString());
+		RegistrarActividadesRequest actividadesRequest =  gson.fromJson(datosJson, RegistrarActividadesRequest.class);	
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-		   // promotores=new GestionarPromotor(promoRequest);
+		registrarActividad=new RegistrarActividad(actividadesRequest);
+		registrarActividad.setIdUsuario(usuario.getIdUsuario());
 			try {
-					response = providerRestTemplate.consumirServicio(registrarActividad.insertarActividades(actividadesRequest).getDatos(), urlCrear, authentication);
-				//response = providerRestTemplate.consumirServicio(registrarActividad.insertarMasActividades(actividadesRequest).getDatos(), urlCrear, authentication);
+				response = providerRestTemplate.consumirServicio(registrarActividad.insertarFormatoActividades().getDatos(), urlCrearMultiple, authentication);
+				/*	response = providerRestTemplate.consumirServicio(registrarActividad.insertarActividades(actividadesRequest).getDatos(), urlCrear, authentication);
+				response = providerRestTemplate.consumirServicio(registrarActividad.insertarMasActividades(actividadesRequest).getDatos(), urlCrear, authentication);
 					logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"REGISTRO PADRE AGREGADO CORRECTAMENTE", ALTA, authentication, usuario);		
 					Integer idPadre = Integer.parseInt(response.getDatos().toString()); 
 					if(response.getCodigo()==200 && actividadesRequest.getActividades().size()>1) {
 					providerRestTemplate.consumirServicio(registrarActividad.insertarRegistroActividades(actividadesRequest, idPadre).getDatos(), urlInsertarMultiple, authentication);
 				}else {
 					providerRestTemplate.consumirServicio(registrarActividad.actualizarRegistroPadre(idPadre).getDatos(), urlInsertarMultiple, authentication);	
-				}
+				} */
 					
 					return response;
 			}catch (Exception e) {
-				String consulta = registrarActividad.insertarActividades(actividadesRequest).getDatos().get("query").toString();
+				String consulta = registrarActividad.insertarFormatoActividades().getDatos().get("query").toString();
 				String encoded = new String(DatatypeConverter.parseBase64Binary(consulta));
 				log.error("Error al ejecutar la query" +encoded);
 				logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"error", MODIFICACION, authentication, usuario);

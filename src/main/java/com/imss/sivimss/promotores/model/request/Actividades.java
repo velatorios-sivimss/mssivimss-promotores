@@ -17,8 +17,6 @@ import lombok.Setter;
 public class Actividades {
 	
 	private Integer idRegistro;
-	private Integer idFormato;
-	private Integer idVelatorio;
 	private String fecElaboracion;
 	private String hrInicio;
 	private String hrFin;

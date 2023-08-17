@@ -16,9 +16,13 @@ import lombok.Setter;
 @Setter
 @Getter
 @JsonIgnoreType(value = true)
-public class ActividadesRequest {
+public class RegistrarActividadesRequest {
 	
-	
+	private Integer idFormato;
+	private Integer idVelatorio;
+	private String folio;
+	private String fecInicio;
+	private String fecFin;
 	private List<Actividades> actividades;
 	
 }

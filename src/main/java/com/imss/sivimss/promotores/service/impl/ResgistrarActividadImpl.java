@@ -75,6 +75,7 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 	
 	@Override
 	public Response<?> buscarFormatoActividades(DatosRequest request, Authentication authentication) throws IOException {
+		  Response<?> response = new Response<>();
 		String datosJson = String.valueOf(request.getDatos().get("datos"));
 		FiltrosPromotorActividadesRequest filtros = gson.fromJson(datosJson, FiltrosPromotorActividadesRequest.class);
 		 Integer pagina = Integer.valueOf(Integer.parseInt(request.getDatos().get("pagina").toString()));
@@ -82,10 +83,17 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 	        filtros.setTamanio(tamanio.toString());
 	        filtros.setPagina(pagina.toString());
 	    	UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-	        Response<?> response = providerRestTemplate.consumirServicio(registrarActividad.buscarFormatoActividades(request, filtros, fecFormat).getDatos(), urlPaginado,
+	        response = providerRestTemplate.consumirServicio(registrarActividad.buscarFormatoActividades(request, filtros, fecFormat).getDatos(), urlPaginado,
 				authentication);
-	        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"CONSULTA FORMATO REGISTRO DE ACTIVIDADES OK", CONSULTA, authentication, usuario);
-		return response;
+	        if(response.getDatos().toString().contains("id")) {
+	        	logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"CONSULTA FORMATO REGISTRO DE ACTIVIDADES OK", CONSULTA, authentication, usuario);
+	        }else {
+	        	response.setError(true);
+	        	response.setMensaje("45");
+	        }
+	    	return response;
+	        	
+	        
 	}
 
 

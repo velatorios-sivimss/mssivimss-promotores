@@ -120,7 +120,7 @@ public class RegistrarActividad {
 		if(filtros.getFecInicio()!=null) {
 			queryUtil.where("FORM.FEC_ELABORACION BETWEEN '" + filtros.getFecInicio()+"'" ).and("'"+filtros.getFecFin()+"'");	
 		}
-		queryUtil.groupBy("FORM.ID_FORMATO_ACTIVIDAD");
+		queryUtil.groupBy("FORM.ID_FORMATO_ACTIVIDAD ORDER BY FORM.FEC_ELABORACION ASC");
 		String query = obtieneQuery(queryUtil);
 		log.info("actividades promotores "+query);
 		String encoded = encodedQuery(query);

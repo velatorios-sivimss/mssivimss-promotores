@@ -225,18 +225,29 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 		return fecForma.format(dateF);       
 	}
 
-		@Override
+	    @Override
 		public Response<?> buscarPorNombre(DatosRequest request, Authentication authentication) throws IOException {
+			Response<?> response;
 			String datosJson = String.valueOf(request.getDatos().get("datos"));
 			FiltrosPromotorRequest filtros = gson.fromJson(datosJson, FiltrosPromotorRequest.class);
 		    	UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-		        if(filtros.getNomPromotor()==null) {
-		        	 logUtil.crearArchivoLog(Level.WARNING.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"INFORMACION INCOMPLETA", CONSULTA, authentication, usuario);
+		    	if(filtros.getNomPromotor()!=null) {
+		    		response = providerRestTemplate.consumirServicio(promotores.buscarPromotorPorNombre(request, filtros).getDatos(), urlConsulta,
+							authentication);
+				        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"BUSCAR PROMOTOR POR NOMBRE", CONSULTA, authentication, usuario);
+		    	}else if(filtros.getCatalogo()==1) {
+		    		response = providerRestTemplate.consumirServicio(promotores.catalogoVelatorios(request, filtros).getDatos(), urlConsulta,
+							authentication);
+				        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"CATALOGO VELATORIOS OK", CONSULTA, authentication, usuario);
+		    	}else if(filtros.getCatalogo()==2) {
+		    		response = providerRestTemplate.consumirServicio(promotores.catalogoDelegaciones(request, filtros).getDatos(), urlConsulta,
+							authentication);
+				        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"CATALOGO DELEGACIONES OK", CONSULTA, authentication, usuario);
+		    	}else {
+		    		 logUtil.crearArchivoLog(Level.WARNING.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"INFORMACION INCOMPLETA", CONSULTA, authentication, usuario);
 					 throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
-		        }
-		    	Response<?> response = providerRestTemplate.consumirServicio(promotores.buscarPromotorPorNombre(request, filtros).getDatos(), urlConsulta,
-					authentication);
-		        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"BUSCAR PROMOTOR POR NOMBRE", CONSULTA, authentication, usuario);
+		    	}
+		    	
 			return response;
 		
 		}

@@ -2,6 +2,7 @@ package com.imss.sivimss.promotores.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -10,6 +11,7 @@ import javax.xml.bind.DatatypeConverter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +27,14 @@ import com.imss.sivimss.promotores.model.request.FiltrosPromotorRequest;
 import com.imss.sivimss.promotores.model.request.RegistrarFormatoActividadesRequest;
 import com.imss.sivimss.promotores.model.request.PromotorRequest;
 import com.imss.sivimss.promotores.model.request.UsuarioDto;
+import com.imss.sivimss.promotores.model.response.ActividadesResponse;
+import com.imss.sivimss.promotores.model.response.FormatoResponse;
 import com.imss.sivimss.promotores.service.RegistrarActividadService;
 import com.imss.sivimss.promotores.util.AppConstantes;
+import com.imss.sivimss.promotores.util.ConvertirGenerico;
 import com.imss.sivimss.promotores.util.DatosRequest;
 import com.imss.sivimss.promotores.util.LogUtil;
+import com.imss.sivimss.promotores.util.MensajeResponseUtil;
 import com.imss.sivimss.promotores.util.ProviderServiceRestTemplate;
 import com.imss.sivimss.promotores.util.Response;
 
@@ -126,5 +132,40 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 				logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"error", MODIFICACION, authentication, usuario);
 				throw new IOException("5", e.getCause()) ;
 			}
+	}
+
+
+	@Override
+	public Response<?> detalleFormatoActividades(DatosRequest request, Authentication authentication)
+			throws IOException {
+		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+		String palabra = request.getDatos().get("palabra").toString();
+		Integer idFormato = Integer.parseInt(palabra);
+		Integer pagina = Integer.valueOf(Integer.parseInt(request.getDatos().get("pagina").toString()));
+        Integer tamanio = Integer.valueOf(Integer.parseInt(request.getDatos().get("tamanio").toString()));
+        Response<?> response = MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(registrarActividad.buscarActividades(request, idFormato, pagina, tamanio).getDatos(), urlPaginado,
+				authentication), "EXITO");   
+        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),
+				this.getClass().getPackage().toString(), "Consulta actividades Ok", CONSULTA, authentication, usuario);
+    	return response;
+	/*	UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+		Response<?> response = new Response<>();
+		List<FormatoResponse> formato;
+		List<ActividadesResponse> actividades;
+		// providerRestTemplate.consumirServicio(renovarBean.validarBeneficiarios(request, numConvenio, idContra, usuarioDto.getIdUsuario()).getDatos(), urlActualizar,authentication);
+		Response<?> responseDatosFormato = providerRestTemplate.consumirServicio(registrarActividad.datosFormato(request, idFormato, fecFormat, pagina, tamanio).getDatos(), urlPaginado,
+				authentication);
+		if(responseDatosFormato.getCodigo()==200) {
+			formato = Arrays.asList(modelMapper.map(responseDatosFormato.getDatos(), FormatoResponse[].class));
+			actividades = Arrays.asList(modelMapper.map(providerRestTemplate.consumirServicio(registrarActividad.buscarActividades(request, idFormato, pagina, tamanio).getDatos(), urlPaginado, authentication).getDatos(), ActividadesResponse[].class));  
+			logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),
+					this.getClass().getPackage().toString(), "Consulta Beneficiarios Ok", CONSULTA, authentication, usuario);
+			FormatoResponse datosFormato = formato.get(0);
+			datosFormato.setActividades(actividades);
+			 response.setDatos(ConvertirGenerico.convertInstanceOfObject(datosFormato));
+		}
+		    response.setCodigo(200);
+            response.setError(false);
+            response.setMensaje("Exito"); */
 	}
 }

@@ -135,18 +135,18 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 			}
 			try {
 				if(promoRequest.getFecPromotorDiasDescanso()==null) {
-					response = providerRestTemplate.consumirServicio(promotores.insertarPromotor().getDatos(), urlCrear, authentication);
+					response = providerRestTemplate.consumirServicio(promotores.insertarPromotor(promoRequest).getDatos(), urlCrear, authentication);
 					logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"PROMOTOR AGREGADO CORRECTAMENTE", ALTA, authentication, usuario);
 					
 				}else {
-					response = providerRestTemplate.consumirServicio(promotores.insertarPromotor().getDatos(), urlCrearMultiple, authentication);
+					response = providerRestTemplate.consumirServicio(promotores.insertarPromotor(promoRequest).getDatos(), urlCrearMultiple, authentication);
 					logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"PROMOTOR AGREGADO CORRECTAMENTE", ALTA, authentication, usuario);
 					logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"DIAS DE DESCANSOS AGREGADOS CORRECTAMENTE", ALTA, authentication, usuario);
 						
 				}
 				return response;
 			}catch (Exception e) {
-				String consulta = promotores.insertarPromotor().getDatos().get("query").toString();
+				String consulta = promotores.insertarPromotor(promoRequest).getDatos().get("query").toString();
 				String encoded = new String(DatatypeConverter.parseBase64Binary(consulta));
 				log.error("Error al ejecutar la query" +encoded);
 				logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"error", MODIFICACION, authentication, usuario);
@@ -169,12 +169,12 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 		promotores.setIdUsuario(usuario.getIdUsuario());
 		try {
 			if(promoRequest.getFecPromotorDiasDescanso()==null) {
-				Response<?> response =  providerRestTemplate.consumirServicio(promotores.actualizarPromotor().getDatos(), urlActualizar, authentication);
+				Response<?> response =  providerRestTemplate.consumirServicio(promotores.actualizarPromotor(promoRequest).getDatos(), urlActualizar, authentication);
 				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"PROMOTOR MODIFICADO CORRECTAMENTE", ALTA, authentication, usuario);
 				return response;
 			}else {
 				
-				Response<?> response = providerRestTemplate.consumirServicio(promotores.actualizarPromotor().getDatos(), urlInsertarMultiple,
+				Response<?> response = providerRestTemplate.consumirServicio(promotores.actualizarPromotor(promoRequest).getDatos(), urlInsertarMultiple,
 					 authentication);
 				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"PROMOTOR MODIFICADO CORRECTAMENTE", ALTA, authentication, usuario);
 				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"DIAS DE DESCANSOS AGREGADOS CORRECTAMENTE", ALTA, authentication, usuario);
@@ -182,7 +182,7 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 			
 		}
 		}catch (Exception e) {
-			String consulta = promotores.actualizarPromotor().getDatos().get("query").toString();
+			String consulta = promotores.actualizarPromotor(promoRequest).getDatos().get("query").toString();
 			String encoded = new String(DatatypeConverter.parseBase64Binary(consulta));
 			log.error("Error al ejecutar la query" +encoded);
 			logUtil.crearArchivoLog(Level.WARNING.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"error", MODIFICACION, authentication, usuario);

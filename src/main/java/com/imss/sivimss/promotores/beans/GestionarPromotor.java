@@ -13,6 +13,7 @@ import java.util.Map;
 import javax.xml.bind.DatatypeConverter;
 
 import com.imss.sivimss.promotores.exception.BadRequestException;
+import com.imss.sivimss.promotores.model.DiasDescansoModel;
 import com.imss.sivimss.promotores.model.request.FiltrosPromotorRequest;
 import com.imss.sivimss.promotores.model.request.PromotorRequest;
 import com.imss.sivimss.promotores.util.AppConstantes;
@@ -51,7 +52,7 @@ public class GestionarPromotor {
 	private String desCategoria;
 	private Integer indEstatus;
 	private Integer idUsuario;
-    private List<String> fecPromotorDiasDescanso;
+    //private List<String> fecPromotorDiasDescanso;
 	private Integer indEstatusDescanso;
 	
 	public GestionarPromotor(PromotorRequest promoRequest) {
@@ -70,7 +71,7 @@ public class GestionarPromotor {
 		this.desPuesto = promoRequest.getPuesto();
 		this.desCategoria = promoRequest.getCategoria();
 		this.indEstatus = promoRequest.getEstatus();
-		this.fecPromotorDiasDescanso = promoRequest.getFecPromotorDiasDescanso(); 
+		//this.fecPromotorDiasDescanso = promoRequest.getFecPromotorDiasDescanso(); 
 	}
 
     //TABLA	
@@ -184,7 +185,7 @@ public class GestionarPromotor {
 		return request;
 	}
 
-	public DatosRequest insertarPromotor() throws ParseException {
+	public DatosRequest insertarPromotor(PromotorRequest promoRequest) throws ParseException {
 		DatosRequest request = new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
 		final QueryHelper q = new QueryHelper("INSERT INTO SVT_PROMOTOR");
@@ -204,13 +205,13 @@ public class GestionarPromotor {
 		q.agregarParametroValues("ID_USUARIO_ALTA", "" +idUsuario+ "");
 		q.agregarParametroValues("FEC_ALTA", "" +AppConstantes.CURRENT_TIMESTAMP + "");
 		String query = q.obtenerQueryInsertar();
-		if(this.fecPromotorDiasDescanso!=null) {
+		if(promoRequest.getFecPromotorDiasDescanso()!=null) {
 			StringBuilder queries= new StringBuilder();
 			queries.append(query);
 			//for(int i=0; i<this.fecPromotorDiasDescanso.size(); i++) {
-			for(String descansos: this.fecPromotorDiasDescanso) {
-		        String fecha=formatFecha(descansos);
-				queries.append("$$" + insertarDiasDescanso(fecha, this.idPromotor));
+			for(DiasDescansoModel descansos: promoRequest.getFecPromotorDiasDescanso()) {
+		        String fecha=formatFecha(descansos.getFecDescanso());
+				queries.append("$$" + insertarDiasDescanso(fecha, this.idPromotor, descansos.getId()));
 			}
 			log.info("estoy en fecDescansos: " +queries.toString());
 				  String encoded = encodedQuery(queries.toString());
@@ -229,19 +230,31 @@ public class GestionarPromotor {
 	      
 	}
 
-	public String insertarDiasDescanso(String descansos, Integer id) {
+	public String insertarDiasDescanso(String descansos, Integer idPromotor, Integer idDescanso) {
 		DatosRequest request = new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
-		final QueryHelper q = new QueryHelper("INSERT INTO SVT_PROMOTOR_DIAS_DESCANSO");
-		if(id!=null) {
-			q.agregarParametroValues(ID_PROMOTOR, ""+id+"");
+		String query = "";
+		QueryHelper q;
+		if(idDescanso!=null) {
+			 q = new QueryHelper("UPDATE SVT_PROMOTOR_DIAS_DESCANSO");
+		}else {
+			 q = new QueryHelper("INSERT INTO SVT_PROMOTOR_DIAS_DESCANSO");
+		}
+		
+		if(idPromotor!=null) {
+			q.agregarParametroValues(ID_PROMOTOR, ""+idPromotor+"");
 		}else {
 			q.agregarParametroValues(ID_PROMOTOR, ID_TABLA);
 		}
 		log.info(descansos);
 		q.agregarParametroValues("FEC_PROMOTOR_DIAS_DESCANSO", "'" +descansos+ "'");
 		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", " 1 ");
-		String query = q.obtenerQueryInsertar();
+		if(idDescanso!=null) {
+			q.addWhere("ID_PROMOTOR_DIAS_DESCANSO =" +idDescanso);
+			query = q.obtenerQueryActualizar();
+		}else {
+			 query = q.obtenerQueryInsertar();
+		}
 		String encoded = encodedQuery(query);
 		parametro.put(AppConstantes.QUERY, encoded);
 		request.setDatos(parametro);
@@ -267,11 +280,10 @@ public class GestionarPromotor {
 			return request;
 	}
 
-	public DatosRequest actualizarPromotor() throws ParseException {
+	public DatosRequest actualizarPromotor(PromotorRequest promoRequest) throws ParseException {
 		DatosRequest request = new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
 		final QueryHelper q = new QueryHelper("UPDATE SVT_PROMOTOR");
-		log.info("estoy aqi "+fecIngreso);
 		q.agregarParametroValues("DES_CORREO", setValor(this.desCorreo));
 		q.agregarParametroValues("FEC_INGRESO", setValor(fecIngreso));
 		q.agregarParametroValues("MON_SUELDOBASE", ""+ this.monSueldoBase +"");
@@ -280,22 +292,22 @@ public class GestionarPromotor {
 		q.agregarParametroValues("DES_CATEGORIA", setValor(this.desCategoria));
 		q.agregarParametroValues("ID_USUARIO_MODIFICA", "" +idUsuario+ "");
 		q.agregarParametroValues("FEC_ACTUALIZACION", "" +AppConstantes.CURRENT_TIMESTAMP + "");
-		if(this.indEstatus==0) {
+		/*if(this.indEstatus==0) {
 			q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "FALSE");
 			q.agregarParametroValues("FEC_BAJA", "" +AppConstantes.CURRENT_TIMESTAMP + "");
 			q.agregarParametroValues("ID_USUARIO_BAJA", "" + idUsuario + "");
-		}else {
+		}/else {
 			q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "TRUE");
-		}
+		}*/ 
 		q.addWhere("ID_PROMOTOR = " + this.idPromotor);
 		String query = q.obtenerQueryActualizar();
 		log.info(query);
-		if(this.fecPromotorDiasDescanso!=null) {
+		if(promoRequest.getFecPromotorDiasDescanso()!=null) {
 				StringBuilder queries= new StringBuilder();
 				queries.append(query);
-				for(String descansos: this.fecPromotorDiasDescanso) {
-			        String fecha=formatFecha(descansos);
-					queries.append("$$" + insertarDiasDescanso(fecha, this.idPromotor));
+				for(DiasDescansoModel descansos: promoRequest.getFecPromotorDiasDescanso()) {
+			        String fecha=formatFecha(descansos.getFecDescanso());
+					queries.append("$$" + insertarDiasDescanso(fecha, this.idPromotor, descansos.getId()));
 				}
 				log.info("actualizar "+query);
 					  String encoded = encodedQuery(queries.toString());

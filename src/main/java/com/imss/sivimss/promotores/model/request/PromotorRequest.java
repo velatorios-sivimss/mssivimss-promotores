@@ -3,6 +3,7 @@ package com.imss.sivimss.promotores.model.request;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
+import com.imss.sivimss.promotores.model.DiasDescansoModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,7 +33,7 @@ public class PromotorRequest {
 	private String puesto;
 	private String categoria;
 	private Integer estatus;
-	private List<String> fecPromotorDiasDescanso;
+	private List<DiasDescansoModel> fecPromotorDiasDescanso;
 	private Integer indEstatusDescanso;
 	
 }

@@ -161,11 +161,11 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 	public Response<?> actualizarPromotor(DatosRequest request, Authentication authentication) throws IOException, ParseException {
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		PromotorRequest promoRequest = gson.fromJson( String.valueOf(request.getDatos().get(AppConstantes.DATOS)), PromotorRequest.class);
-		
 		if (promoRequest.getIdPromotor() == null) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 		}
 		promotores=new GestionarPromotor(promoRequest);
+		promotores.setFecIngreso(formatFecha(promoRequest.getFecIngreso()));
 		promotores.setIdUsuario(usuario.getIdUsuario());
 		try {
 			if(promoRequest.getFecPromotorDiasDescanso()==null) {

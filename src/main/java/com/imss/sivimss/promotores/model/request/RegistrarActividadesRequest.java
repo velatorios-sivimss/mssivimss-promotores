@@ -16,13 +16,13 @@ import lombok.Setter;
 @JsonIgnoreType(value = true)
 public class RegistrarActividadesRequest {
 	
-	private Integer idRegistro;
+	private Integer idActividad;
 	private String hrInicio;
 	private String hrFin;
 	private Integer idPromotor;
 	private String nomPromotor;
 	private Integer numPlaticas;
-	private String unidadImss;
+	private String unidad;
 	private String empresa;
 	private String actividadRealizada;
 	private String observaciones;

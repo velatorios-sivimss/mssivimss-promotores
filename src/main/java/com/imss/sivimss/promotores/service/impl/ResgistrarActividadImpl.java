@@ -11,27 +11,17 @@ import javax.xml.bind.DatatypeConverter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.imss.sivimss.promotores.beans.GestionarPromotor;
 import com.imss.sivimss.promotores.beans.RegistrarActividad;
-import com.imss.sivimss.promotores.model.request.RegistrarActividadesRequest;
 import com.imss.sivimss.promotores.model.request.FiltrosPromotorActividadesRequest;
-import com.imss.sivimss.promotores.model.request.FiltrosPromotorRequest;
 import com.imss.sivimss.promotores.model.request.RegistrarFormatoActividadesRequest;
-import com.imss.sivimss.promotores.model.request.PromotorRequest;
 import com.imss.sivimss.promotores.model.request.UsuarioDto;
-import com.imss.sivimss.promotores.model.response.ActividadesResponse;
-import com.imss.sivimss.promotores.model.response.FormatoResponse;
 import com.imss.sivimss.promotores.service.RegistrarActividadService;
 import com.imss.sivimss.promotores.util.AppConstantes;
-import com.imss.sivimss.promotores.util.ConvertirGenerico;
 import com.imss.sivimss.promotores.util.DatosRequest;
 import com.imss.sivimss.promotores.util.LogUtil;
 import com.imss.sivimss.promotores.util.MensajeResponseUtil;
@@ -133,6 +123,31 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 				throw new IOException("5", e.getCause()) ;
 			}
 	}
+	
+	
+	@Override
+	public Response<?> actualizarFormato(DatosRequest request, Authentication authentication) throws IOException {
+		Response<?> response = new Response<>();
+		
+		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
+		RegistrarFormatoActividadesRequest actividadesRequest =  gson.fromJson(datosJson, RegistrarFormatoActividadesRequest.class);	
+		log.info("id " +actividadesRequest.getIdFormato());
+		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+		
+		registrarActividad=new RegistrarActividad(actividadesRequest);
+		registrarActividad.setIdUsuario(usuario.getIdUsuario());
+		
+		try {
+				response = providerRestTemplate.consumirServicio(registrarActividad.actualizarRegistroActividades().getDatos(), urlInsertarMultiple, authentication);		
+					return response;
+			}catch (Exception e) {
+				String consulta = registrarActividad.actualizarRegistroActividades().getDatos().get("query").toString();
+				String encoded = new String(DatatypeConverter.parseBase64Binary(consulta));
+				log.error("Error al ejecutar la query" +encoded);
+				logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"error", MODIFICACION, authentication, usuario);
+				throw new IOException("5", e.getCause()) ;
+			}
+	}
 
 
 	@Override
@@ -143,8 +158,8 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 		Integer idFormato = Integer.parseInt(palabra);
 		Integer pagina = Integer.valueOf(Integer.parseInt(request.getDatos().get("pagina").toString()));
         Integer tamanio = Integer.valueOf(Integer.parseInt(request.getDatos().get("tamanio").toString()));
-        Response<?> response = MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(registrarActividad.buscarActividades(request, idFormato, pagina, tamanio).getDatos(), urlPaginado,
-				authentication), "EXITO");   
+        Response<?> response = MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(registrarActividad.verDetalleActividades(request, idFormato, pagina, tamanio).getDatos(), urlPaginado,
+				authentication), EXITO);   
         logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),
 				this.getClass().getPackage().toString(), "Consulta actividades Ok", CONSULTA, authentication, usuario);
     	return response;

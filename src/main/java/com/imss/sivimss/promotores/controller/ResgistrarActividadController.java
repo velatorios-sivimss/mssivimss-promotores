@@ -52,9 +52,32 @@ public class ResgistrarActividadController {
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
+	@PostMapping("/detalle")
+	public CompletableFuture<?> detalleFormatoActividadesPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException{
+		Response<?> response = registrarActividad.detalleFormatoActividades(request,authentication);
+		return CompletableFuture
+				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+	}	
+	
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
 	@PostMapping("/agregar")
 	public CompletableFuture<?> insertarAtividadesPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException{
 		Response<?> response = registrarActividad.agregarRegistroActividades(request,authentication);
+		return CompletableFuture
+				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+      
+	}
+	
+
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	@PostMapping("/modificar")
+	public CompletableFuture<?> actualizarAtividadesPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException{
+		log.info("estoy en el controllador");
+		Response<?> response = registrarActividad.actualizarFormato(request,authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
       

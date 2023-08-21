@@ -271,7 +271,7 @@ public class GestionarPromotor {
 		DatosRequest request = new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
 		final QueryHelper q = new QueryHelper("UPDATE SVT_PROMOTOR");
-		log.info(fecIngreso);
+		log.info("estoy aqi "+fecIngreso);
 		q.agregarParametroValues("DES_CORREO", setValor(this.desCorreo));
 		q.agregarParametroValues("FEC_INGRESO", setValor(fecIngreso));
 		q.agregarParametroValues("MON_SUELDOBASE", ""+ this.monSueldoBase +"");

@@ -43,6 +43,7 @@ public class GestionarPromotor {
 	private String aPaterno;
 	private String aMaterno;
 	private String fecNacimiento;
+	private Integer idLugarNac;
 	private String fecIngreso;
 	private Integer monSueldoBase;
 	private Integer idVelatorio;
@@ -71,6 +72,7 @@ public class GestionarPromotor {
 		this.desPuesto = promoRequest.getPuesto();
 		this.desCategoria = promoRequest.getCategoria();
 		this.indEstatus = promoRequest.getEstatus();
+		this.idLugarNac = promoRequest.getIdLugarNac();
 		//this.fecPromotorDiasDescanso = promoRequest.getFecPromotorDiasDescanso(); 
 	}
 
@@ -90,6 +92,8 @@ public class GestionarPromotor {
 				"PR.NOM_PROMOTOR AS nombre",
 				"PR.NOM_PAPELLIDO AS primerApellido",
 				"PR.NOM_SAPELLIDO AS segundoApellido",
+				"PR.ID_ESTADO AS idLugarNac",
+				"SE.DES_ESTADO AS lugarNac",
 				"DATE_FORMAT(PR.FEC_NACIMIENTO, '"+fecFormat+"') AS fecNac",
 				"DATE_FORMAT(PR.FEC_INGRESO, '"+fecFormat+"') AS fecIngreso",
 				"DATE_FORMAT(PR.FEC_BAJA, '"+fecFormat+"') AS fecBaja",
@@ -106,7 +110,8 @@ public class GestionarPromotor {
 				"PR.IND_ACTIVO AS estatus")
 		.from(SVT_PROMOTOR)
 		.join("SVC_VELATORIO SV ", "PR.ID_VELATORIO = SV.ID_VELATORIO")
-		.leftJoin("SVT_PROMOTOR_DIAS_DESCANSO DIA", "PR.ID_PROMOTOR = DIA.ID_PROMOTOR AND DIA.IND_ACTIVO = 1");
+		.leftJoin("SVT_PROMOTOR_DIAS_DESCANSO DIA", "PR.ID_PROMOTOR = DIA.ID_PROMOTOR AND DIA.IND_ACTIVO = 1")
+		.leftJoin("SVC_ESTADO SE", "PR.ID_ESTADO=SE.ID_ESTADO");
 		if(filtros.getIdDelegacion()!=null) {
 			queryUtil.where("SV.ID_DELEGACION = "+ filtros.getIdDelegacion() + "");
 		}
@@ -141,6 +146,8 @@ public class GestionarPromotor {
 				"PR.NOM_PROMOTOR AS nombre",
 				"PR.NOM_PAPELLIDO AS primerApellido",
 				"PR.NOM_SAPELLIDO AS segundoApellido",
+				"PR.ID_ESTADO AS idLugarNac",
+				"SE.DES_ESTADO AS lugarNac",
 				"DATE_FORMAT(PR.FEC_NACIMIENTO, '"+fecFormat+"') AS fecNac",
 				"DATE_FORMAT(PR.FEC_INGRESO, '"+fecFormat+"') AS fecIngreso",
 				"DATE_FORMAT(PR.FEC_BAJA, '"+fecFormat+"') AS fecBaja",
@@ -154,7 +161,8 @@ public class GestionarPromotor {
 				"PR.DES_CATEGORIA AS categoria",
 				"PR.IND_ACTIVO AS estatus")
 		.from(SVT_PROMOTOR)
-		.join("SVC_VELATORIO SV ", "PR.ID_VELATORIO = SV.ID_VELATORIO");
+		.join("SVC_VELATORIO SV ", "PR.ID_VELATORIO = SV.ID_VELATORIO")
+		.leftJoin("SVC_ESTADO SE", "PR.ID_ESTADO=SE.ID_ESTADO");
 		queryUtil.where("PR.ID_PROMOTOR = :id")
 		.setParameter("id", Integer.parseInt(palabra));
 		String query = obtieneQuery(queryUtil);
@@ -194,6 +202,7 @@ public class GestionarPromotor {
 		q.agregarParametroValues("NOM_PAPELLIDO", setValor(this.aPaterno));
 		q.agregarParametroValues("NOM_SAPELLIDO", setValor(this.aMaterno));
 		q.agregarParametroValues("FEC_NACIMIENTO", "'" +fecNacimiento +"'");
+		q.agregarParametroValues("ID_ESTADO", "" +this.idLugarNac +"");
 		q.agregarParametroValues("DES_CORREO", setValor(this.desCorreo));
 		q.agregarParametroValues("NUM_EMPLEDO", "'" +this.numEmpleado + "'");
 		q.agregarParametroValues("FEC_INGRESO", "'" +fecIngreso +"'");

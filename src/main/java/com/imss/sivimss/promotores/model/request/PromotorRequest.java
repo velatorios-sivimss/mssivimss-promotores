@@ -25,6 +25,7 @@ public class PromotorRequest {
 	private String aPaterno;
 	private String aMaterno;
 	private String fecNac;
+	private Integer idLugarNac;
 	private String correo;
 	private String numEmpleado;
 	private String fecIngreso;

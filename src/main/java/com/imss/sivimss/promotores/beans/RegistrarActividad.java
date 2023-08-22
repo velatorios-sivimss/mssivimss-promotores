@@ -33,7 +33,7 @@ public class RegistrarActividad {
 
 	private Integer idFormato;
 	private Integer idVelatorio;
-	private String folio;
+	private String nomVelatorio;
 	private String fecElaboracion;
 	private List<RegistrarActividadesRequest> actividades;
 	private Integer idUsuario;
@@ -41,7 +41,7 @@ public class RegistrarActividad {
 	public RegistrarActividad(RegistrarFormatoActividadesRequest actividadRequest) {
 		this.idFormato = actividadRequest.getIdFormato();
 		this.idVelatorio = actividadRequest.getIdVelatorio();
-		this.folio = actividadRequest.getFolio();
+		this.nomVelatorio = actividadRequest.getNomVelatorio();
 		this.fecElaboracion = actividadRequest.getFecElaboracion();
 		this.actividades = actividadRequest.getActividades();
 	}
@@ -139,7 +139,7 @@ public class RegistrarActividad {
 		Map<String, Object> parametro = new HashMap<>();
 		final QueryHelper q = new QueryHelper("INSERT INTO SVT_FORMATO_ACTIVIDAD_PROMOTORES");
 		q.agregarParametroValues("ID_VELATORIO", ""+this.getIdVelatorio()+"");
-		q.agregarParametroValues("DES_FOLIO", "'"+this.folio+"'");
+		q.agregarParametroValues("DES_FOLIO", "(SELECT CONCAT(SUBSTRING(SV.DES_VELATORIO,1,3),'-',LPAD(COUNT(FORM.ID_FORMATO_ACTIVIDAD)+1, 6,'0'))FROM SVT_FORMATO_ACTIVIDAD_PROMOTORES FORM JOIN SVC_VELATORIO SV ON FORM.ID_VELATORIO = SV.ID_VELATORIO WHERE FORM.ID_VELATORIO = "+this.idVelatorio+")");
 		q.agregarParametroValues("FEC_ELABORACION", "" +AppConstantes.CURRENT_TIMESTAMP +"" );
 		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "1");
 	    q.agregarParametroValues("ID_USUARIO_ALTA", "" +idUsuario+ "");
@@ -175,8 +175,7 @@ public class RegistrarActividad {
 		}else {
 			q = new QueryHelper("INSERT INTO SVT_ACTIVIDAD_PROMOTORES");
 		}
-		log.info("--> "+this.idFormato );
-		q.agregarParametroValues("ID_FORMATO_ACTIVIDAD", ""+this.idFormato+"");
+		//q.agregarParametroValues("ID_FORMATO_ACTIVIDAD", ""+this.idFormato+"");
 		q.agregarParametroValues("TIM_HORA_INICIO", setValor(fActividad.getHrInicio()));
 		q.agregarParametroValues("TIM_HORA_FIN", setValor(fActividad.getHrFin()));
 		q.agregarParametroValues("ID_PROMOTOR", "" +fActividad.getIdPromotor() + "");
@@ -188,8 +187,8 @@ public class RegistrarActividad {
 		q.agregarParametroValues("DES_OBSERVACIONES", setValor(fActividad.getObservaciones()));
 		q.agregarParametroValues("IND_EVIDENCIA", ""+fActividad.getEvidencia()+"");
 		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "1");
-		q.agregarParametroValues("ID_USUARIO_ALTA", "" +idUsuario+ "");
-		q.agregarParametroValues("FEC_ALTA", "" +AppConstantes.CURRENT_TIMESTAMP + "");
+		q.agregarParametroValues("ID_USUARIO_MODIFICA", "" +idUsuario+ "");
+		q.agregarParametroValues("FEC_ACTUALIZACION", "" +AppConstantes.CURRENT_TIMESTAMP + "");
 		if(fActividad.getIdActividad()!=null) {
 			q.addWhere("ID_REGISTRO_ACTIVIDAD = " +fActividad.getIdActividad());
 			query = q.obtenerQueryActualizar();

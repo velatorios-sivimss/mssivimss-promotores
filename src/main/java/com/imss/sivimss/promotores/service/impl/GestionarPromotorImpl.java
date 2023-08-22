@@ -135,18 +135,18 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 			}
 			try {
 				if(promoRequest.getFecPromotorDiasDescanso()==null) {
-					response = providerRestTemplate.consumirServicio(promotores.insertarPromotor().getDatos(), urlCrear, authentication);
+					response = providerRestTemplate.consumirServicio(promotores.insertarPromotor(promoRequest).getDatos(), urlCrear, authentication);
 					logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"PROMOTOR AGREGADO CORRECTAMENTE", ALTA, authentication, usuario);
 					
 				}else {
-					response = providerRestTemplate.consumirServicio(promotores.insertarPromotor().getDatos(), urlCrearMultiple, authentication);
+					response = providerRestTemplate.consumirServicio(promotores.insertarPromotor(promoRequest).getDatos(), urlCrearMultiple, authentication);
 					logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"PROMOTOR AGREGADO CORRECTAMENTE", ALTA, authentication, usuario);
 					logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"DIAS DE DESCANSOS AGREGADOS CORRECTAMENTE", ALTA, authentication, usuario);
 						
 				}
 				return response;
 			}catch (Exception e) {
-				String consulta = promotores.insertarPromotor().getDatos().get("query").toString();
+				String consulta = promotores.insertarPromotor(promoRequest).getDatos().get("query").toString();
 				String encoded = new String(DatatypeConverter.parseBase64Binary(consulta));
 				log.error("Error al ejecutar la query" +encoded);
 				logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"error", MODIFICACION, authentication, usuario);
@@ -161,20 +161,20 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 	public Response<?> actualizarPromotor(DatosRequest request, Authentication authentication) throws IOException, ParseException {
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		PromotorRequest promoRequest = gson.fromJson( String.valueOf(request.getDatos().get(AppConstantes.DATOS)), PromotorRequest.class);
-		
 		if (promoRequest.getIdPromotor() == null) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 		}
 		promotores=new GestionarPromotor(promoRequest);
+		promotores.setFecIngreso(formatFecha(promoRequest.getFecIngreso()));
 		promotores.setIdUsuario(usuario.getIdUsuario());
 		try {
 			if(promoRequest.getFecPromotorDiasDescanso()==null) {
-				Response<?> response =  providerRestTemplate.consumirServicio(promotores.actualizarPromotor().getDatos(), urlActualizar, authentication);
+				Response<?> response =  providerRestTemplate.consumirServicio(promotores.actualizarPromotor(promoRequest).getDatos(), urlActualizar, authentication);
 				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"PROMOTOR MODIFICADO CORRECTAMENTE", ALTA, authentication, usuario);
 				return response;
 			}else {
 				
-				Response<?> response = providerRestTemplate.consumirServicio(promotores.actualizarPromotor().getDatos(), urlInsertarMultiple,
+				Response<?> response = providerRestTemplate.consumirServicio(promotores.actualizarPromotor(promoRequest).getDatos(), urlInsertarMultiple,
 					 authentication);
 				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"PROMOTOR MODIFICADO CORRECTAMENTE", ALTA, authentication, usuario);
 				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"DIAS DE DESCANSOS AGREGADOS CORRECTAMENTE", ALTA, authentication, usuario);
@@ -182,7 +182,7 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 			
 		}
 		}catch (Exception e) {
-			String consulta = promotores.actualizarPromotor().getDatos().get("query").toString();
+			String consulta = promotores.actualizarPromotor(promoRequest).getDatos().get("query").toString();
 			String encoded = new String(DatatypeConverter.parseBase64Binary(consulta));
 			log.error("Error al ejecutar la query" +encoded);
 			logUtil.crearArchivoLog(Level.WARNING.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"error", MODIFICACION, authentication, usuario);
@@ -227,18 +227,31 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 
 		@Override
 		public Response<?> buscarPorNombre(DatosRequest request, Authentication authentication) throws IOException {
+			Response<?> response;
 			String datosJson = String.valueOf(request.getDatos().get("datos"));
 			FiltrosPromotorRequest filtros = gson.fromJson(datosJson, FiltrosPromotorRequest.class);
 		    	UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-		        if(filtros.getNomPromotor()==null) {
-		        	 logUtil.crearArchivoLog(Level.WARNING.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"INFORMACION INCOMPLETA", CONSULTA, authentication, usuario);
+		    	if(filtros.getNomPromotor()!=null) {
+		    		response = providerRestTemplate.consumirServicio(promotores.buscarPromotorPorNombre(request, filtros).getDatos(), urlConsulta,
+							authentication);
+				        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"BUSCAR PROMOTOR POR NOMBRE", CONSULTA, authentication, usuario);
+		    	}else if(filtros.getCatalogo()==1) {
+		    		response = providerRestTemplate.consumirServicio(promotores.catalogoVelatorios(request).getDatos(), urlConsulta,
+							authentication);
+				        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"CATALOGO VELATORIOS OK", CONSULTA, authentication, usuario);
+		    	}else if(filtros.getCatalogo()==2) {
+		    		response = providerRestTemplate.consumirServicio(promotores.catalogoDelegaciones(request).getDatos(), urlConsulta,
+							authentication);
+				        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"CATALOGO DELEGACIONES OK", CONSULTA, authentication, usuario);
+		    	}else if(filtros.getCatalogo()==3) {
+		    		response = providerRestTemplate.consumirServicio(promotores.catalogoEstados(request).getDatos(), urlConsulta,
+							authentication);
+				        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"CATALOGO ESTADOS OK", CONSULTA, authentication, usuario);
+		    	}else {
+		    		 logUtil.crearArchivoLog(Level.WARNING.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"INFORMACION INCOMPLETA", CONSULTA, authentication, usuario);
 					 throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
-		        }
-		    	Response<?> response = providerRestTemplate.consumirServicio(promotores.buscarPromotorPorNombre(request, filtros).getDatos(), urlConsulta,
-					authentication);
-		        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"BUSCAR PROMOTOR POR NOMBRE", CONSULTA, authentication, usuario);
-			return response;
-		
+		    	}
+		    	return response;
 		}
 
 }

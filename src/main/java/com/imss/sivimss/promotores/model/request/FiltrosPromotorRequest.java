@@ -19,6 +19,7 @@ public class FiltrosPromotorRequest {
 	private Integer idVelatorio;
 	private Integer idDelegacion;
 	private String nomPromotor;
+	private Integer catalogo;
 	private String tamanio;
 	private String pagina;
 

@@ -30,6 +30,8 @@ public class PromotorResponse {
 	private String correo;
 	private String antiguedad;
 	private String fecNac;
+	private Integer idLugarNac;
+	private String lugarNac;
 	private String fecIngreso;
 	private Integer sueldoBase;
 	private String curp;

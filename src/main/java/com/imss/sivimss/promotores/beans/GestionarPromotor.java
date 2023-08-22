@@ -6,13 +6,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
 
-import com.imss.sivimss.promotores.exception.BadRequestException;
 import com.imss.sivimss.promotores.model.DiasDescansoModel;
 import com.imss.sivimss.promotores.model.request.FiltrosPromotorRequest;
 import com.imss.sivimss.promotores.model.request.PromotorRequest;
@@ -78,10 +76,13 @@ public class GestionarPromotor {
 
     //TABLA	
 	public static final String SVT_PROMOTOR= "SVT_PROMOTOR PR";
+	public static final String SVC_VELATORIO= "SVC_VELATORIO SV";
+	public static final String SVC_ESTADO= "SVC_ESTADO SE";
 	
 	//PARAMETERS
 	public static final String ID_TABLA= "idTabla";
 	public static final String ID_PROMOTOR= "ID_PROMOTOR";
+	public static final String SV_DES_VELATORIO= "SV.DES_VELATORIO";
 	
 	public DatosRequest catalogoPromotores(DatosRequest request, FiltrosPromotorRequest filtros, String fecFormat) {
 		Map<String, Object> parametros = new HashMap<>();
@@ -98,7 +99,7 @@ public class GestionarPromotor {
 				"DATE_FORMAT(PR.FEC_INGRESO, '"+fecFormat+"') AS fecIngreso",
 				"DATE_FORMAT(PR.FEC_BAJA, '"+fecFormat+"') AS fecBaja",
 				"PR.MON_SUELDOBASE AS sueldoBase",
-				"SV.DES_VELATORIO AS velatorio",
+				SV_DES_VELATORIO +" AS velatorio",
 				"COUNT(DIA.FEC_PROMOTOR_DIAS_DESCANSO) AS diasDescanso",
 				"GROUP_CONCAT(DATE_FORMAT(DIA.FEC_PROMOTOR_DIAS_DESCANSO, '"+fecFormat+"')) AS fecDescansos",
 				"IF(TIMESTAMPDIFF(MONTH, PR.FEC_INGRESO, CURRENT_TIMESTAMP()) < 12, "
@@ -109,9 +110,9 @@ public class GestionarPromotor {
 				"PR.DES_CATEGORIA AS categoria",
 				"PR.IND_ACTIVO AS estatus")
 		.from(SVT_PROMOTOR)
-		.join("SVC_VELATORIO SV ", "PR.ID_VELATORIO = SV.ID_VELATORIO")
+		.join(SVC_VELATORIO, "PR.ID_VELATORIO = SV.ID_VELATORIO")
 		.leftJoin("SVT_PROMOTOR_DIAS_DESCANSO DIA", "PR.ID_PROMOTOR = DIA.ID_PROMOTOR AND DIA.IND_ACTIVO = 1")
-		.leftJoin("SVC_ESTADO SE", "PR.ID_ESTADO=SE.ID_ESTADO");
+		.leftJoin(SVC_ESTADO, "PR.ID_ESTADO=SE.ID_ESTADO");
 		if(filtros.getIdDelegacion()!=null) {
 			queryUtil.where("SV.ID_DELEGACION = "+ filtros.getIdDelegacion() + "");
 		}
@@ -162,7 +163,7 @@ public class GestionarPromotor {
 				"PR.IND_ACTIVO AS estatus")
 		.from(SVT_PROMOTOR)
 		.join("SVC_VELATORIO SV ", "PR.ID_VELATORIO = SV.ID_VELATORIO")
-		.leftJoin("SVC_ESTADO SE", "PR.ID_ESTADO=SE.ID_ESTADO");
+		.leftJoin(SVC_ESTADO, "PR.ID_ESTADO=SE.ID_ESTADO");
 		queryUtil.where("PR.ID_PROMOTOR = :id")
 		.setParameter("id", Integer.parseInt(palabra));
 		String query = obtieneQuery(queryUtil);
@@ -386,7 +387,7 @@ public class GestionarPromotor {
 	        SelectQueryUtil queryUtil = new SelectQueryUtil();
 	        queryUtil.select("SV.ID_VELATORIO AS idVelatorio",
 	                        "SV.DES_VELATORIO AS velatorio")
-	                .from("SVC_VELATORIO SV");
+	                .from(SVC_VELATORIO);
 	        String query = obtieneQuery(queryUtil);
 	        log.info(query);
 	        String encoded = encodedQuery(query);
@@ -417,7 +418,7 @@ public class GestionarPromotor {
         SelectQueryUtil queryUtil = new SelectQueryUtil();
         queryUtil.select("SE.ID_ESTADO AS idEstado",
                         "SE.DES_ESTADO AS estado")
-                .from("SVC_ESTADO SE");
+                .from(SVC_ESTADO);
         String query = obtieneQuery(queryUtil);
         log.info(query);
         String encoded = encodedQuery(query);

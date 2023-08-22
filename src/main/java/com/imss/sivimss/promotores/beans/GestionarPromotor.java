@@ -380,6 +380,52 @@ public class GestionarPromotor {
 	        request.setDatos(parametro);
 	        return request;
 	}
+	
+	public DatosRequest catalogoVelatorios(DatosRequest request) {
+		 Map<String, Object> parametro = new HashMap<>();
+	        SelectQueryUtil queryUtil = new SelectQueryUtil();
+	        queryUtil.select("SV.ID_VELATORIO AS idVelatorio",
+	                        "SV.DES_VELATORIO AS velatorio")
+	                .from("SVC_VELATORIO SV");
+	        String query = obtieneQuery(queryUtil);
+	        log.info(query);
+	        String encoded = encodedQuery(query);
+	        parametro.put(AppConstantes.QUERY, encoded);
+	        request.getDatos().remove(AppConstantes.DATOS);
+	        request.setDatos(parametro);
+	        return request;
+	}
+
+	public DatosRequest catalogoDelegaciones(DatosRequest request) {
+		 Map<String, Object> parametro = new HashMap<>();
+	        SelectQueryUtil queryUtil = new SelectQueryUtil();
+	        queryUtil.select("SD.ID_DELEGACION AS idDelegacion",
+	                        "SD.DES_DELEGACION AS delegacion")
+	                .from("SVC_DELEGACION SD");
+	        String query = obtieneQuery(queryUtil);
+	        log.info(query);
+	        String encoded = encodedQuery(query);
+	        parametro.put(AppConstantes.QUERY, encoded);
+	        request.getDatos().remove(AppConstantes.DATOS);
+	        request.setDatos(parametro);
+	        return request;
+	}
+	
+
+	public DatosRequest catalogoEstados(DatosRequest request) {
+		Map<String, Object> parametro = new HashMap<>();
+        SelectQueryUtil queryUtil = new SelectQueryUtil();
+        queryUtil.select("SE.ID_ESTADO AS idEstado",
+                        "SE.DES_ESTADO AS estado")
+                .from("SVC_ESTADO SE");
+        String query = obtieneQuery(queryUtil);
+        log.info(query);
+        String encoded = encodedQuery(query);
+        parametro.put(AppConstantes.QUERY, encoded);
+        request.getDatos().remove(AppConstantes.DATOS);
+        request.setDatos(parametro);
+        return request;
+	}
 
 
 	   public String formatFecha(String fecha) throws ParseException {

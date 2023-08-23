@@ -247,6 +247,23 @@ public class RegistrarActividad {
 		return request;
 	}
 	
+	public DatosRequest buscarRepetido(Integer idFormato) {
+		DatosRequest request = new DatosRequest();
+		Map<String, Object> parametros = new HashMap<>();
+		SelectQueryUtil queryUtil = new SelectQueryUtil();
+		queryUtil.select("FORM.FEC_ELABORACION")
+		.from(SVT_FORMATO_ACTIVIDAD_PROMOTORES);
+			queryUtil.where("TIMESTAMPDIFF(DAY, FORM.FEC_ELABORACION, CURDATE())>7")
+			.and("FORM.ID_FORMATO_ACTIVIDAD = " + idFormato);	
+		String query = obtieneQuery(queryUtil);
+		log.info("validacion "+query);
+		String encoded = encodedQuery(query);
+	    parametros.put(AppConstantes.QUERY, encoded);
+       // request.getDatos().remove(AppConstantes.DATOS);
+	    request.setDatos(parametros);
+		return request;
+	}
+	
 
 	private static String encodedQuery(String query) {
         return DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
@@ -263,11 +280,6 @@ public class RegistrarActividad {
 	
 	private static String obtieneQuery(SelectQueryUtil queryUtil) {
         return queryUtil.build();
-	}
-
-	public DatosRequest buscarRepetido(Integer idFormato) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 }

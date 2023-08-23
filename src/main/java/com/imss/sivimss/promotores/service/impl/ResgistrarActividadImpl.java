@@ -121,12 +121,13 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 		
 		registrarActividad=new RegistrarActividad(actividadesRequest);
 		registrarActividad.setIdUsuario(usuario.getIdUsuario());
-	/*	if(!validarDias(actividadesRequest.getIdFormato(), authentication)) {
+		if(!validarDias(actividadesRequest.getIdFormato(), authentication)) {
 			response.setCodigo(200);
 			response.setError(true);
 			response.setMensaje("5");
 			response.setDatos(null);
-		} */
+			return response;
+		} 
 		try {
 				response = providerRestTemplate.consumirServicio(registrarActividad.actualizarRegistroActividades().getDatos(), urlInsertarMultiple, authentication);		
 					return response;
@@ -174,8 +175,9 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 	}
 	
 	private boolean validarDias(Integer idFormato, Authentication authentication) throws IOException {
-		Response<?> response= providerRestTemplate.consumirServicio(registrarActividad.buscarRepetido(idFormato).getDatos(), urlConsulta,
+		Response<?> response=  providerRestTemplate.consumirServicio(registrarActividad.buscarRepetido( idFormato).getDatos(), urlConsulta,
 				authentication);
+		log.info("--> "+response.getDatos().toString());
 		if (response.getCodigo()==200){
 			Object rst=response.getDatos();
 			return !rst.toString().equals("[]");	

@@ -66,7 +66,7 @@ public class RegistrarActividad {
 				"IF(TIMESTAMPDIFF(DAY, FORM.FEC_ELABORACION, CURDATE())>7, FALSE, TRUE) AS banderaModificar")
 		.from(SVT_FORMATO_ACTIVIDAD_PROMOTORES)
 		.join(SVT_ACTIVIDAD_PROMOTORES, "FORM.ID_FORMATO_ACTIVIDAD = PROM.ID_FORMATO_ACTIVIDAD")
-		.join(SVC_VELATORIO, "FORM.ID_VELATORIO = SV.ID_VELATORIO");
+		.join(SVC_VELATORIO, "FORM.ID_VELATORIO=SV.ID_VELATORIO");
 		if(filtros.getIdDelegacion()!=null) {
 			queryUtil.where("SV.ID_DELEGACION = "+ filtros.getIdDelegacion() + "");
 		}

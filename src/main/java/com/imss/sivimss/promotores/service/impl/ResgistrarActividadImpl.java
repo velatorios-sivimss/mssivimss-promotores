@@ -95,15 +95,19 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
 		RegistrarFormatoActividadesRequest actividadesRequest =  gson.fromJson(datosJson, RegistrarFormatoActividadesRequest.class);	
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+		
 		registrarActividad=new RegistrarActividad(actividadesRequest);
 		registrarActividad.setIdUsuario(usuario.getIdUsuario());
 			try {
 				if(actividadesRequest.getIdFormato()==null) {
 					response =  providerRestTemplate.consumirServicio(registrarActividad.insertarFormatoActividades(actividadesRequest.getActividades()).getDatos(), urlCrear, authentication);
-				}else {
-					response = providerRestTemplate.consumirServicio(registrarActividad.insertarActividad(actividadesRequest.getActividades(), actividadesRequest.getIdFormato()).getDatos(), urlCrearMultiple, authentication);
+				if(response.getCodigo()==200) {
+					Integer idFormato = Integer.parseInt(response.getDatos().toString());
+					 providerRestTemplate.consumirServicio(registrarActividad.insertarActividad(actividadesRequest.getActividades(), idFormato).getDatos(), urlCrear, authentication);
 				}
-				
+				}else {
+					 response = providerRestTemplate.consumirServicio(registrarActividad.insertarActividad(actividadesRequest.getActividades(), actividadesRequest.getIdFormato()).getDatos(), urlCrear, authentication);
+				}
 					return response;
 			}catch (Exception e) {
 				String consulta = registrarActividad.insertarFormatoActividades(actividadesRequest.getActividades()).getDatos().get("query").toString();

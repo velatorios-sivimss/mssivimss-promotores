@@ -21,8 +21,8 @@ public class RegistrarFormatoActividadesRequest {
 	
 	private Integer idFormato;
 	private Integer idVelatorio;
-	private String nomVelatorio;
-	private String fecElaboracion;
-	private List<RegistrarActividadesRequest> actividades;
+	private String fecInicio;
+	private String fecFin;
+	private RegistrarActividadesRequest actividades;
 	
 }

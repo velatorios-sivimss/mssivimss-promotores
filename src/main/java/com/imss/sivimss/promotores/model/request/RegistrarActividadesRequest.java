@@ -17,6 +17,7 @@ import lombok.Setter;
 public class RegistrarActividadesRequest {
 	
 	private Integer idActividad;
+	private String fecActividad;
 	private String hrInicio;
 	private String hrFin;
 	private Integer idPromotor;
@@ -27,6 +28,4 @@ public class RegistrarActividadesRequest {
 	private String actividadRealizada;
 	private String observaciones;
 	private Integer evidencia;
-
-
 }

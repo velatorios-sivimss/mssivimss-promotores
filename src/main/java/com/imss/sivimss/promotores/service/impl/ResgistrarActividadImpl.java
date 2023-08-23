@@ -1,9 +1,6 @@
 package com.imss.sivimss.promotores.service.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Level;
 
 import javax.xml.bind.DatatypeConverter;
@@ -104,16 +101,6 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 		registrarActividad.setIdUsuario(usuario.getIdUsuario());
 			try {
 				response = providerRestTemplate.consumirServicio(registrarActividad.insertarFormatoActividades().getDatos(), urlCrearMultiple, authentication);
-				/*	response = providerRestTemplate.consumirServicio(registrarActividad.insertarActividades(actividadesRequest).getDatos(), urlCrear, authentication);
-				response = providerRestTemplate.consumirServicio(registrarActividad.insertarMasActividades(actividadesRequest).getDatos(), urlCrear, authentication);
-					logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"REGISTRO PADRE AGREGADO CORRECTAMENTE", ALTA, authentication, usuario);		
-					Integer idPadre = Integer.parseInt(response.getDatos().toString()); 
-					if(response.getCodigo()==200 && actividadesRequest.getActividades().size()>1) {
-					providerRestTemplate.consumirServicio(registrarActividad.insertarRegistroActividades(actividadesRequest, idPadre).getDatos(), urlInsertarMultiple, authentication);
-				}else {
-					providerRestTemplate.consumirServicio(registrarActividad.actualizarRegistroPadre(idPadre).getDatos(), urlInsertarMultiple, authentication);	
-				} */
-					
 					return response;
 			}catch (Exception e) {
 				String consulta = registrarActividad.insertarFormatoActividades().getDatos().get("query").toString();
@@ -128,15 +115,18 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 	@Override
 	public Response<?> actualizarFormato(DatosRequest request, Authentication authentication) throws IOException {
 		Response<?> response = new Response<>();
-		
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
 		RegistrarFormatoActividadesRequest actividadesRequest =  gson.fromJson(datosJson, RegistrarFormatoActividadesRequest.class);	
-		log.info("id " +actividadesRequest.getIdFormato());
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		
 		registrarActividad=new RegistrarActividad(actividadesRequest);
 		registrarActividad.setIdUsuario(usuario.getIdUsuario());
-		
+	/*	if(!validarDias(actividadesRequest.getIdFormato(), authentication)) {
+			response.setCodigo(200);
+			response.setError(true);
+			response.setMensaje("5");
+			response.setDatos(null);
+		} */
 		try {
 				response = providerRestTemplate.consumirServicio(registrarActividad.actualizarRegistroActividades().getDatos(), urlInsertarMultiple, authentication);		
 					return response;
@@ -148,7 +138,6 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 				throw new IOException("5", e.getCause()) ;
 			}
 	}
-
 
 	@Override
 	public Response<?> detalleFormatoActividades(DatosRequest request, Authentication authentication)
@@ -182,5 +171,15 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 		    response.setCodigo(200);
             response.setError(false);
             response.setMensaje("Exito"); */
+	}
+	
+	private boolean validarDias(Integer idFormato, Authentication authentication) throws IOException {
+		Response<?> response= providerRestTemplate.consumirServicio(registrarActividad.buscarRepetido(idFormato).getDatos(), urlConsulta,
+				authentication);
+		if (response.getCodigo()==200){
+			Object rst=response.getDatos();
+			return !rst.toString().equals("[]");	
+			}
+		return false;
 	}
 }

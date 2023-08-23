@@ -15,6 +15,6 @@ public interface RegistrarActividadService {
 
 	Response<?> detalleFormatoActividades(DatosRequest request, Authentication authentication)  throws IOException;
 
-	Response<?> actualizarFormato(DatosRequest request, Authentication authentication) throws IOException;
+	Response<?> eliminarActividad(DatosRequest request, Authentication authentication) throws IOException;
 
 }

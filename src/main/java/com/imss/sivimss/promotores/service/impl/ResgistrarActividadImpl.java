@@ -92,18 +92,28 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 	public Response<?> agregarRegistroActividades(DatosRequest request, Authentication authentication)
 			throws IOException {
 		Response<?> response = new Response<>();
-		 //JsonParser parser = new JsonParser();
-	     //JsonObject jO = (JsonObject) parser.parse((String) request.getDatos().get(AppConstantes.DATOS));
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
 		RegistrarFormatoActividadesRequest actividadesRequest =  gson.fromJson(datosJson, RegistrarFormatoActividadesRequest.class);	
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+		
 		registrarActividad=new RegistrarActividad(actividadesRequest);
 		registrarActividad.setIdUsuario(usuario.getIdUsuario());
 			try {
-				response = providerRestTemplate.consumirServicio(registrarActividad.insertarFormatoActividades().getDatos(), urlCrearMultiple, authentication);
+				if(actividadesRequest.getActividades().getIdActividad()!=null) {
+					response = providerRestTemplate.consumirServicio(registrarActividad.actualizarActividad(actividadesRequest.getActividades()).getDatos(), urlActualizar, authentication);	
+				}
+				else if(actividadesRequest.getIdFormato()==null && actividadesRequest.getActividades().getIdActividad()==null) {
+					response =  providerRestTemplate.consumirServicio(registrarActividad.insertarFormatoActividades(actividadesRequest.getActividades()).getDatos(), urlCrear, authentication);
+				if(response.getCodigo()==200) {
+					Integer idFormato = Integer.parseInt(response.getDatos().toString());
+					 providerRestTemplate.consumirServicio(registrarActividad.insertarActividad(actividadesRequest.getActividades(), idFormato).getDatos(), urlCrear, authentication);
+				}
+				}else if(actividadesRequest.getIdFormato() !=null){
+					 response = providerRestTemplate.consumirServicio(registrarActividad.insertarActividad(actividadesRequest.getActividades(), actividadesRequest.getIdFormato()).getDatos(), urlCrear, authentication);
+				}
 					return response;
 			}catch (Exception e) {
-				String consulta = registrarActividad.insertarFormatoActividades().getDatos().get("query").toString();
+				String consulta = registrarActividad.insertarFormatoActividades(actividadesRequest.getActividades()).getDatos().get("query").toString();
 				String encoded = new String(DatatypeConverter.parseBase64Binary(consulta));
 				log.error("Error al ejecutar la query" +encoded);
 				logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"error", MODIFICACION, authentication, usuario);
@@ -111,7 +121,7 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 			}
 	}
 	
-	
+	/*
 	@Override
 	public Response<?> actualizarFormato(DatosRequest request, Authentication authentication) throws IOException {
 		Response<?> response = new Response<>();
@@ -126,7 +136,7 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 			response.setError(true);
 			response.setMensaje("5");
 			response.setDatos(null);
-		} */
+		} 
 		try {
 				response = providerRestTemplate.consumirServicio(registrarActividad.actualizarRegistroActividades().getDatos(), urlInsertarMultiple, authentication);		
 					return response;
@@ -137,7 +147,7 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 				logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"error", MODIFICACION, authentication, usuario);
 				throw new IOException("5", e.getCause()) ;
 			}
-	}
+	} */
 
 	@Override
 	public Response<?> detalleFormatoActividades(DatosRequest request, Authentication authentication)
@@ -181,5 +191,16 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 			return !rst.toString().equals("[]");	
 			}
 		return false;
+	}
+
+	@Override
+	public Response<?> eliminarActividad(DatosRequest request, Authentication authentication) throws IOException {
+		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
+		FiltrosPromotorActividadesRequest filtros =  gson.fromJson(datosJson, FiltrosPromotorActividadesRequest.class);	
+		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+		Response<?> response= providerRestTemplate.consumirServicio(registrarActividad.eliminarActividad(filtros.getIdActividad(), usuario.getIdUsuario()).getDatos(), urlActualizar,
+				authentication);
+		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"REGISTRO ELIMINADO CORRECTAMENTE", BAJA, authentication, usuario);
+		return response;
 	}
 }

@@ -74,10 +74,9 @@ public class ResgistrarActividadController {
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
-	@PostMapping("/modificar")
-	public CompletableFuture<?> actualizarAtividadesPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException{
-		log.info("estoy en el controllador");
-		Response<?> response = registrarActividad.actualizarFormato(request,authentication);
+	@PostMapping("/eliminar")
+	public CompletableFuture<?> cambiarEstatusActividad(@RequestBody DatosRequest request,Authentication authentication) throws IOException{
+		Response<?> response = registrarActividad.eliminarActividad(request,authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
       

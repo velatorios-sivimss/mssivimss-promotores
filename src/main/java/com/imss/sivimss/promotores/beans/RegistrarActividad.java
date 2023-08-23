@@ -116,47 +116,31 @@ public class RegistrarActividad {
 	}
 	
 	
-	/*public DatosRequest actualizarRegistroActividades() {
+	public DatosRequest actualizarActividad(RegistrarActividadesRequest actividad) {
 		DatosRequest request = new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
-		String query="";
-		StringBuilder queries= new StringBuilder();
-		QueryHelper q;
-		for(RegistrarActividadesRequest fActividad: this.getActividades()) {
-		if(fActividad.getIdActividad()!=null){
-			q = new QueryHelper("UPDATE SVT_ACTIVIDAD_PROMOTORES");
-		}else {
-			q = new QueryHelper("INSERT INTO SVT_ACTIVIDAD_PROMOTORES");
-			q.agregarParametroValues("ID_FORMATO_ACTIVIDAD", ""+this.idFormato+"");
-		}
-		q.agregarParametroValues("TIM_HORA_INICIO", setValor(fActividad.getHrInicio()));
-		q.agregarParametroValues("TIM_HORA_FIN", setValor(fActividad.getHrFin()));
-		q.agregarParametroValues("ID_PROMOTOR", "" +fActividad.getIdPromotor() + "");
-		q.agregarParametroValues("NOM_PROMOTOR", setValor(fActividad.getNomPromotor()));
-		q.agregarParametroValues("NUM_PLATICAS", ""+ fActividad.getNumPlaticas()+"");
-		q.agregarParametroValues("DES_UNIDAD_IMSS", setValor(fActividad.getUnidad()));
-		q.agregarParametroValues("DES_EMPRESA", setValor(fActividad.getEmpresa()));
-		q.agregarParametroValues("DES_ACTIVIDAD_REALIZADA", setValor(fActividad.getActividadRealizada()));
-		q.agregarParametroValues("DES_OBSERVACIONES", setValor(fActividad.getObservaciones()));
-		q.agregarParametroValues("IND_EVIDENCIA", ""+fActividad.getEvidencia()+"");
+		final QueryHelper q = new QueryHelper("UPDATE SVT_ACTIVIDAD_PROMOTORES");
+		q.agregarParametroValues("FEC_ACTIVIDAD", "'"+actividad.getFecActividad()+"'");
+		q.agregarParametroValues("TIM_HORA_INICIO", setValor(actividad.getHrInicio()));
+		q.agregarParametroValues("TIM_HORA_FIN", setValor(actividad.getHrFin()));
+		q.agregarParametroValues("ID_PROMOTOR", "" +actividad.getIdPromotor() + "");
+		q.agregarParametroValues("NUM_PLATICAS", ""+ actividad.getNumPlaticas()+"");
+		q.agregarParametroValues("DES_UNIDAD_IMSS", setValor(actividad.getUnidad()));
+		q.agregarParametroValues("DES_EMPRESA", setValor(actividad.getEmpresa()));
+		q.agregarParametroValues("DES_ACTIVIDAD_REALIZADA", setValor(actividad.getActividadRealizada()));
+		q.agregarParametroValues("DES_OBSERVACIONES", setValor(actividad.getObservaciones()));
+		q.agregarParametroValues("IND_EVIDENCIA", ""+actividad.getEvidencia()+"");
 		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "1");
 		q.agregarParametroValues("ID_USUARIO_MODIFICA", "" +idUsuario+ "");
 		q.agregarParametroValues("FEC_ACTUALIZACION", "" +AppConstantes.CURRENT_TIMESTAMP + "");
-		if(fActividad.getIdActividad()!=null) {
-			q.addWhere("ID_REGISTRO_ACTIVIDAD = " +fActividad.getIdActividad());
-			query = q.obtenerQueryActualizar();
-		}else {
-		    query = q.obtenerQueryInsertar();	
-		}
-		queries.append(query+"$$");
-		}
-		log.info("actualizar: " +queries.toString());
-		  String encoded = encodedQuery(queries.toString());
+			q.addWhere("ID_REGISTRO_ACTIVIDAD = " +actividad.getIdActividad());
+		String query = q.obtenerQueryActualizar();
+		log.info("actualizar: " +query);
+		  String encoded = encodedQuery(query);
 		  parametro.put(AppConstantes.QUERY, encoded);
-		   parametro.put("separador","$$");
         request.setDatos(parametro);
         return request;
-	} */
+	}
 	
 	/*public String insertarActividades(RegistrarActividadesRequest actividades) {
 		DatosRequest request = new DatosRequest();

@@ -99,13 +99,16 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 		registrarActividad=new RegistrarActividad(actividadesRequest);
 		registrarActividad.setIdUsuario(usuario.getIdUsuario());
 			try {
-				if(actividadesRequest.getIdFormato()==null) {
+				if(actividadesRequest.getActividades().getIdActividad()!=null) {
+					response = providerRestTemplate.consumirServicio(registrarActividad.actualizarActividad(actividadesRequest.getActividades()).getDatos(), urlActualizar, authentication);	
+				}
+				else if(actividadesRequest.getIdFormato()==null && actividadesRequest.getActividades().getIdActividad()==null) {
 					response =  providerRestTemplate.consumirServicio(registrarActividad.insertarFormatoActividades(actividadesRequest.getActividades()).getDatos(), urlCrear, authentication);
 				if(response.getCodigo()==200) {
 					Integer idFormato = Integer.parseInt(response.getDatos().toString());
 					 providerRestTemplate.consumirServicio(registrarActividad.insertarActividad(actividadesRequest.getActividades(), idFormato).getDatos(), urlCrear, authentication);
 				}
-				}else {
+				}else if(actividadesRequest.getIdFormato() !=null){
 					 response = providerRestTemplate.consumirServicio(registrarActividad.insertarActividad(actividadesRequest.getActividades(), actividadesRequest.getIdFormato()).getDatos(), urlCrear, authentication);
 				}
 					return response;

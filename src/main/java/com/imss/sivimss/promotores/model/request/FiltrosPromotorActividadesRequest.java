@@ -15,7 +15,8 @@ import lombok.Setter;
 @Getter
 @JsonIgnoreType(value = true)
 public class FiltrosPromotorActividadesRequest {
-	
+
+	private Integer idActividad;
 	private Integer idVelatorio;
 	private Integer idDelegacion;
 	private String folio;

@@ -193,10 +193,14 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 		return false;
 	}
 
-
 	@Override
-	public Response<?> actualizarFormato(DatosRequest request, Authentication authentication) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public Response<?> eliminarActividad(DatosRequest request, Authentication authentication) throws IOException {
+		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
+		FiltrosPromotorActividadesRequest filtros =  gson.fromJson(datosJson, FiltrosPromotorActividadesRequest.class);	
+		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+		Response<?> response= providerRestTemplate.consumirServicio(registrarActividad.eliminarActividad(filtros.getIdActividad(), usuario.getIdUsuario()).getDatos(), urlActualizar,
+				authentication);
+		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"REGISTRO ELIMINADO CORRECTAMENTE", BAJA, authentication, usuario);
+		return response;
 	}
 }

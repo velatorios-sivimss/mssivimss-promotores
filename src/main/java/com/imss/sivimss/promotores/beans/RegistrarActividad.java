@@ -276,4 +276,22 @@ public class RegistrarActividad {
 		return null;
 	}
 
+
+
+	public DatosRequest eliminarActividad(Integer idActividad, Integer idUsuario) {
+		DatosRequest request = new DatosRequest();
+		Map<String, Object> parametro = new HashMap<>();
+		final QueryHelper q = new QueryHelper("UPDATE SVT_ACTIVIDAD_PROMOTORES");	
+		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "!IND_ACTIVO");
+		q.agregarParametroValues("ID_USUARIO_BAJA", "" +idUsuario+ "");
+		q.agregarParametroValues("FEC_BAJA", "" +AppConstantes.CURRENT_TIMESTAMP + "");
+			q.addWhere("ID_REGISTRO_ACTIVIDAD = " +idActividad);
+		String query = q.obtenerQueryActualizar();
+		log.info("ELIMINAR: " +query);
+		  String encoded = encodedQuery(query);
+		  parametro.put(AppConstantes.QUERY, encoded);
+        request.setDatos(parametro);
+        return request;
+	}
+
 }

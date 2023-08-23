@@ -1,9 +1,7 @@
 package com.imss.sivimss.promotores.model.request;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
-import com.imss.sivimss.promotores.model.response.ActividadesResponse;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

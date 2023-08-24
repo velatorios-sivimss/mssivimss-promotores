@@ -65,7 +65,7 @@ public class RegistrarActividad {
 				"SUM(PROM.NUM_PLATICAS) AS numActividades",
 				"IF(TIMESTAMPDIFF(DAY, FORM.FEC_ELABORACION, CURDATE())>7, FALSE, TRUE) AS banderaModificar")
 		.from(SVT_FORMATO_ACTIVIDAD_PROMOTORES)
-		.join(SVT_ACTIVIDAD_PROMOTORES, "FORM.ID_FORMATO_ACTIVIDAD = PROM.ID_FORMATO_ACTIVIDAD")
+		.join(SVT_ACTIVIDAD_PROMOTORES, "FORM.ID_FORMATO_ACTIVIDAD=PROM.ID_FORMATO_ACTIVIDAD")
 		.join(SVC_VELATORIO, "FORM.ID_VELATORIO=SV.ID_VELATORIO");
 		if(filtros.getIdDelegacion()!=null) {
 			queryUtil.where("SV.ID_DELEGACION = "+ filtros.getIdDelegacion() + "");
@@ -121,7 +121,7 @@ public class RegistrarActividad {
 		DatosRequest request = new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
 		final QueryHelper q = new QueryHelper("UPDATE SVT_ACTIVIDAD_PROMOTORES");
-		q.agregarParametroValues("FEC_ACTIVIDAD", "'"+actividad.getFecActividad()+"'");
+		q.agregarParametroValues("FEC_ACTIVIDAD", "'"+fecActividad+"'");
 		q.agregarParametroValues("TIM_HORA_INICIO", setValor(actividad.getHrInicio()));
 		q.agregarParametroValues("TIM_HORA_FIN", setValor(actividad.getHrFin()));
 		q.agregarParametroValues("ID_PROMOTOR", "" +actividad.getIdPromotor() + "");
@@ -272,9 +272,21 @@ public class RegistrarActividad {
         return queryUtil.build();
 	}
 
-	public DatosRequest buscarRepetido(Integer idFormato) {
-		// TODO Auto-generated method stub
-		return null;
+	public DatosRequest buscarFormato(Integer idActividad) {
+		DatosRequest request = new DatosRequest();
+		Map<String, Object> parametros = new HashMap<>();
+		SelectQueryUtil queryUtil = new SelectQueryUtil();
+		queryUtil.select("FORM.FEC_ELABORACION")
+		.from(SVT_FORMATO_ACTIVIDAD_PROMOTORES)
+		.join(SVT_ACTIVIDAD_PROMOTORES, "FORM.ID_FORMATO_ACTIVIDAD = PROM.ID_FORMATO_ACTIVIDAD");
+			queryUtil.where("TIMESTAMPDIFF(DAY, FORM.FEC_ELABORACION, CURDATE())>7")
+			.and("PROM.ID_REGISTRO_ACTIVIDAD  = " + idActividad);	
+		String query = obtieneQuery(queryUtil);
+		log.info("validacion "+query);
+		String encoded = encodedQuery(query);
+	    parametros.put(AppConstantes.QUERY, encoded);
+	    request.setDatos(parametros);
+		return request;
 	}
 
 

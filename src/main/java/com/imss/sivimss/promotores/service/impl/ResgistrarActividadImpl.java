@@ -9,12 +9,14 @@ import javax.xml.bind.DatatypeConverter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 
 import com.google.gson.Gson;
 import com.imss.sivimss.promotores.beans.RegistrarActividad;
+import com.imss.sivimss.promotores.exception.BadRequestException;
 import com.imss.sivimss.promotores.model.request.FiltrosPromotorActividadesRequest;
 import com.imss.sivimss.promotores.model.request.RegistrarFormatoActividadesRequest;
 import com.imss.sivimss.promotores.model.request.UsuarioDto;
@@ -98,15 +100,26 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
 		RegistrarFormatoActividadesRequest actividadesRequest =  gson.fromJson(datosJson, RegistrarFormatoActividadesRequest.class);	
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-		
+	
 		registrarActividad=new RegistrarActividad(actividadesRequest);
 		registrarActividad.setIdUsuario(usuario.getIdUsuario());
-		registrarActividad.setFecInicio(prom.formatFecha(actividadesRequest.getFecInicio()));
-		registrarActividad.setFecFin(prom.formatFecha(actividadesRequest.getFecFin()));
+	/*	if(actividadesRequest.getFecInicio()==null || actividadesRequest.getFecFin()==null || actividadesRequest.getActividades().getFecActividad()==null) {
+			throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
+		} */
+		if(actividadesRequest.getFecInicio()!=null) {
+			registrarActividad.setFecInicio(prom.formatFecha(actividadesRequest.getFecInicio()));
+			registrarActividad.setFecFin(prom.formatFecha(actividadesRequest.getFecFin()));
+		}
 		registrarActividad.setFecActividad(prom.formatFecha(actividadesRequest.getActividades().getFecActividad()));
 		
 			try {
 				if(actividadesRequest.getActividades().getIdActividad()!=null) {
+					if(!validarDias(actividadesRequest.getActividades().getIdActividad(), authentication)) {
+				       response.setCodigo(200);
+				       response.setError(true);
+				       response.setMensaje("5");
+				       return response;
+					}
 					response = providerRestTemplate.consumirServicio(registrarActividad.actualizarActividad(actividadesRequest.getActividades()).getDatos(), urlActualizar, authentication);	
 					logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"REGISTRO MODIFICADO CORRCTEMENTE", MODIFICACION, authentication, usuario);
 				}
@@ -194,8 +207,8 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
             response.setMensaje("Exito"); */
 	}
 	
-	private boolean validarDias(Integer idFormato, Authentication authentication) throws IOException {
-		Response<?> response= providerRestTemplate.consumirServicio(registrarActividad.buscarRepetido(idFormato).getDatos(), urlConsulta,
+	private boolean validarDias(Integer idActividad, Authentication authentication) throws IOException {
+		Response<?> response= providerRestTemplate.consumirServicio(registrarActividad.buscarFormato(idActividad).getDatos(), urlConsulta,
 				authentication);
 		if (response.getCodigo()==200){
 			Object rst=response.getDatos();

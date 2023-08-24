@@ -43,7 +43,7 @@ public class ResgistrarActividadController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	@PostMapping("/buscar")
-	public CompletableFuture<?> buscarFormatoActividadesPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException{
+	public CompletableFuture<?> buscarFormatoActividadesPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException, ParseException{
 		Response<?> response = registrarActividad.buscarFormatoActividades(request,authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));

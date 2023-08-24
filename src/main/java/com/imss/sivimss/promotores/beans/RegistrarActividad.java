@@ -68,6 +68,7 @@ public class RegistrarActividad {
 		.from(SVT_FORMATO_ACTIVIDAD_PROMOTORES)
 		.join(SVT_ACTIVIDAD_PROMOTORES, "FORM.ID_FORMATO_ACTIVIDAD=PROM.ID_FORMATO_ACTIVIDAD")
 		.join(SVC_VELATORIO, "FORM.ID_VELATORIO=SV.ID_VELATORIO");
+		queryUtil.where("PROM.IND_ACTIVO=1");
 		if(filtros.getIdDelegacion()!=null) {
 			queryUtil.where("SV.ID_DELEGACION = "+ filtros.getIdDelegacion() + "");
 		}
@@ -78,7 +79,7 @@ public class RegistrarActividad {
 			queryUtil.where("FORM.DES_FOLIO = '" + filtros.getFolio()+ "'");	
 		}
 		if(filtros.getFecInicio()!=null) {
-			queryUtil.where("FORM.FEC_ELABORACION BETWEEN '" + filtros.getFecInicio()+"'" ).and("'"+filtros.getFecFin()+"'");	
+			queryUtil.where("FORM.FEC_ELABORACION BETWEEN '" + fecInicio+"'" ).and("'"+fecFin+"'");	
 		}
 		queryUtil.groupBy("FORM.ID_FORMATO_ACTIVIDAD ORDER BY FORM.FEC_ELABORACION ASC");
 		String query = obtieneQuery(queryUtil);

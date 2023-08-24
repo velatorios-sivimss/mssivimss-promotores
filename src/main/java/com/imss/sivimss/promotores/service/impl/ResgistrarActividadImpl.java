@@ -71,7 +71,8 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 	
 	
 	@Override
-	public Response<?> buscarFormatoActividades(DatosRequest request, Authentication authentication) throws IOException {
+	public Response<?> buscarFormatoActividades(DatosRequest request, Authentication authentication) throws IOException, ParseException {
+		GestionarPromotorImpl prom = new GestionarPromotorImpl();
 		String datosJson = String.valueOf(request.getDatos().get("datos"));
 		FiltrosPromotorActividadesRequest filtros = gson.fromJson(datosJson, FiltrosPromotorActividadesRequest.class);
 		 Integer pagina = Integer.valueOf(Integer.parseInt(request.getDatos().get("pagina").toString()));
@@ -79,6 +80,10 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 	        filtros.setTamanio(tamanio.toString());
 	        filtros.setPagina(pagina.toString());
 	    	UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+	    	if(filtros.getFecInicio()!=null) {
+	    		registrarActividad.setFecInicio(prom.formatFecha(filtros.getFecInicio()));
+	    		registrarActividad.setFecFin(prom.formatFecha(filtros.getFecFin()));
+	    	}
 	    	Response<?> response = providerRestTemplate.consumirServicio(registrarActividad.buscarFormatoActividades(request, filtros, fecFormat).getDatos(), urlPaginado,
 				authentication);
 	        if(response.getDatos().toString().contains("id")) {

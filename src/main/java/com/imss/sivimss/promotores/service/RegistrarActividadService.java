@@ -12,7 +12,7 @@ public interface RegistrarActividadService {
 
 	Response<?> agregarRegistroActividades(DatosRequest request, Authentication authentication) throws IOException, ParseException;
 
-	Response<?> buscarFormatoActividades(DatosRequest request, Authentication authentication) throws IOException;
+	Response<?> buscarFormatoActividades(DatosRequest request, Authentication authentication) throws IOException, ParseException;
 
 	Response<?> detalleActividades(DatosRequest request, Authentication authentication)  throws IOException;
 

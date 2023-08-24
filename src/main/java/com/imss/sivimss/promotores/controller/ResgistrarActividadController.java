@@ -52,7 +52,17 @@ public class ResgistrarActividadController {
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
-	@PostMapping("/detalle")
+	@PostMapping("/detalle-actividades")
+	public CompletableFuture<?> detalleActividadesPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException{
+		Response<?> response = registrarActividad.detalleActividades(request,authentication);
+		return CompletableFuture
+				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+	}	
+
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	@PostMapping("/detalle-formato")
 	public CompletableFuture<?> detalleFormatoActividadesPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException{
 		Response<?> response = registrarActividad.detalleFormatoActividades(request,authentication);
 		return CompletableFuture

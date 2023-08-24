@@ -177,6 +177,18 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 	public Response<?> detalleFormatoActividades(DatosRequest request, Authentication authentication)
 			throws IOException {
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+		 Response<?> response = MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(registrarActividad.datosFormato(request, fecFormat).getDatos(), urlConsulta,
+					authentication), EXITO);   
+	        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),
+					this.getClass().getPackage().toString(), "Consulta formato Ok", CONSULTA, authentication, usuario);
+	    	return response;
+	}
+	
+	
+	@Override
+	public Response<?> detalleActividades(DatosRequest request, Authentication authentication)
+			throws IOException {
+		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		String palabra = request.getDatos().get("palabra").toString();
 		Integer idFormato = Integer.parseInt(palabra);
 		Integer pagina = Integer.valueOf(Integer.parseInt(request.getDatos().get("pagina").toString()));
@@ -227,4 +239,5 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"REGISTRO ELIMINADO CORRECTAMENTE", BAJA, authentication, usuario);
 		return response;
 	}
+
 }

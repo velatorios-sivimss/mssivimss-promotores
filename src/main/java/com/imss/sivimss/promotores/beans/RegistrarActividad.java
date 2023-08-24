@@ -195,24 +195,26 @@ public class RegistrarActividad {
 	}
 	
 	
-	public DatosRequest datosFormato(DatosRequest request, Integer idFormato, String fecFormat, Integer pagina, Integer tamanio) {
+	public DatosRequest datosFormato(DatosRequest request, String fecFormat) {
 		Map<String, Object> parametros = new HashMap<>();
+		String palabra = request.getDatos().get("palabra").toString();
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("FORM.ID_FORMATO_ACTIVIDAD AS idFormato",
 				"DATE_FORMAT(FORM.FEC_ELABORACION, '"+fecFormat+"') AS fecElaboracion",
 				"CONCAT(FORM.ID_VELATORIO, ' ', SV.DES_VELATORIO) AS Velatorio",
 				"FORM.DES_FOLIO AS folio",
+				"FORM.FEC_INICIO AS fecInicio",
+				"FORM.FEC_FIN AS fecFin",
 				"SUM(PROM.NUM_PLATICAS) AS numActividades")
 		.from(SVT_FORMATO_ACTIVIDAD_PROMOTORES)
 		.join(SVT_ACTIVIDAD_PROMOTORES, "FORM.ID_FORMATO_ACTIVIDAD = PROM.ID_FORMATO_ACTIVIDAD")
 		.join(SVC_VELATORIO, "FORM.ID_VELATORIO = SV.ID_VELATORIO");
-		queryUtil.where("FORM.ID_FORMATO_ACTIVIDAD = " +idFormato);
+		queryUtil.where("PROM.IND_ACTIVO=1").and
+		("FORM.ID_FORMATO_ACTIVIDAD = " +Integer.parseInt(palabra));
 		String query = obtieneQuery(queryUtil);
 		log.info("formato "+query);
 		String encoded = encodedQuery(query);
 	    parametros.put(AppConstantes.QUERY, encoded);
-	    parametros.put(PAGINA, pagina);
-        parametros.put(TAMANIO,tamanio);
         request.getDatos().remove(AppConstantes.DATOS);
 	    request.setDatos(parametros);
 		return request;

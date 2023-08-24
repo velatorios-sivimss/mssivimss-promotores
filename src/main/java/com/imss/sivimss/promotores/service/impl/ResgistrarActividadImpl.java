@@ -1,6 +1,7 @@
 package com.imss.sivimss.promotores.service.impl;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.logging.Level;
 
 import javax.xml.bind.DatatypeConverter;
@@ -83,6 +84,7 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 	        	response.setError(true);
 	        	response.setMensaje("45");
 	        	response.setDatos(null);
+	        	logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"NO HAY INFORMACION RELACIONADA A TU BUSQUEDA", CONSULTA, authentication, usuario);
 	        } 
 	    	return response;
 	}
@@ -90,7 +92,8 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 
 	@Override
 	public Response<?> agregarRegistroActividades(DatosRequest request, Authentication authentication)
-			throws IOException {
+			throws IOException, ParseException {
+		GestionarPromotorImpl prom = new GestionarPromotorImpl();
 		Response<?> response = new Response<>();
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
 		RegistrarFormatoActividadesRequest actividadesRequest =  gson.fromJson(datosJson, RegistrarFormatoActividadesRequest.class);	
@@ -98,25 +101,33 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 		
 		registrarActividad=new RegistrarActividad(actividadesRequest);
 		registrarActividad.setIdUsuario(usuario.getIdUsuario());
+		registrarActividad.setFecInicio(prom.formatFecha(actividadesRequest.getFecInicio()));
+		registrarActividad.setFecFin(prom.formatFecha(actividadesRequest.getFecFin()));
+		registrarActividad.setFecActividad(prom.formatFecha(actividadesRequest.getActividades().getFecActividad()));
+		
 			try {
 				if(actividadesRequest.getActividades().getIdActividad()!=null) {
 					response = providerRestTemplate.consumirServicio(registrarActividad.actualizarActividad(actividadesRequest.getActividades()).getDatos(), urlActualizar, authentication);	
+					logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"REGISTRO MODIFICADO CORRCTEMENTE", MODIFICACION, authentication, usuario);
 				}
 				else if(actividadesRequest.getIdFormato()==null && actividadesRequest.getActividades().getIdActividad()==null) {
 					response =  providerRestTemplate.consumirServicio(registrarActividad.insertarFormatoActividades(actividadesRequest.getActividades()).getDatos(), urlCrear, authentication);
-				if(response.getCodigo()==200) {
+					logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"FORMATO DE ACTIVIDADES REGISTRADO CORRECTAMENTE", ALTA, authentication, usuario);
+					if(response.getCodigo()==200) {
 					Integer idFormato = Integer.parseInt(response.getDatos().toString());
 					 providerRestTemplate.consumirServicio(registrarActividad.insertarActividad(actividadesRequest.getActividades(), idFormato).getDatos(), urlCrear, authentication);
-				}
+					 logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"REGISTRO AGREGADO CORRECTAMENTE", ALTA, authentication, usuario);
+					}
 				}else if(actividadesRequest.getIdFormato() !=null){
 					 response = providerRestTemplate.consumirServicio(registrarActividad.insertarActividad(actividadesRequest.getActividades(), actividadesRequest.getIdFormato()).getDatos(), urlCrear, authentication);
+					 logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"REGISTRO AGREGADO CORRECTAMENTE", ALTA, authentication, usuario);
 				}
 					return response;
 			}catch (Exception e) {
 				String consulta = registrarActividad.insertarFormatoActividades(actividadesRequest.getActividades()).getDatos().get("query").toString();
 				String encoded = new String(DatatypeConverter.parseBase64Binary(consulta));
 				log.error("Error al ejecutar la query" +encoded);
-				logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"error", MODIFICACION, authentication, usuario);
+				logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"ERROR AL AGREGAR ACTUALIZAR EL REGISTRO", ALTA, authentication, usuario);
 				throw new IOException("5", e.getCause()) ;
 			}
 	}
@@ -157,7 +168,7 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 		Integer idFormato = Integer.parseInt(palabra);
 		Integer pagina = Integer.valueOf(Integer.parseInt(request.getDatos().get("pagina").toString()));
         Integer tamanio = Integer.valueOf(Integer.parseInt(request.getDatos().get("tamanio").toString()));
-        Response<?> response = MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(registrarActividad.verDetalleActividades(request, idFormato, pagina, tamanio).getDatos(), urlPaginado,
+        Response<?> response = MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(registrarActividad.verDetalleActividades(request, idFormato, pagina, tamanio, fecFormat).getDatos(), urlPaginado,
 				authentication), EXITO);   
         logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),
 				this.getClass().getPackage().toString(), "Consulta actividades Ok", CONSULTA, authentication, usuario);
@@ -198,8 +209,8 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
 		FiltrosPromotorActividadesRequest filtros =  gson.fromJson(datosJson, FiltrosPromotorActividadesRequest.class);	
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-		Response<?> response= providerRestTemplate.consumirServicio(registrarActividad.eliminarActividad(filtros.getIdActividad(), usuario.getIdUsuario()).getDatos(), urlActualizar,
-				authentication);
+		Response<?> response= MensajeResponseUtil.mensajeResponse(providerRestTemplate.consumirServicio(registrarActividad.eliminarActividad(filtros.getIdActividad(), usuario.getIdUsuario()).getDatos(), urlActualizar,
+				authentication), EXITO);
 		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"REGISTRO ELIMINADO CORRECTAMENTE", BAJA, authentication, usuario);
 		return response;
 	}

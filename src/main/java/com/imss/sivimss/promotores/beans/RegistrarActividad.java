@@ -33,6 +33,7 @@ public class RegistrarActividad {
 	private Integer idVelatorio;
 	private String fecInicio;
 	private String fecFin;
+	private String fecActividad;
 	//private RegistrarActividadesRequest actividades;
 	private Integer idUsuario;
 	
@@ -97,8 +98,8 @@ public class RegistrarActividad {
 		Map<String, Object> parametro = new HashMap<>();
 		final QueryHelper q = new QueryHelper("INSERT INTO SVT_FORMATO_ACTIVIDAD_PROMOTORES");
 		q.agregarParametroValues("ID_VELATORIO", ""+this.getIdVelatorio()+"");
-		q.agregarParametroValues("FEC_INICIO", "'"+this.fecInicio+"'");
-		q.agregarParametroValues("FEC_FIN", "'"+this.fecFin+"'");
+		q.agregarParametroValues("FEC_INICIO", "'"+fecInicio+"'");
+		q.agregarParametroValues("FEC_FIN", "'"+fecFin+"'");
 		q.agregarParametroValues("DES_FOLIO", "(SELECT CONCAT(SUBSTRING(SV.DES_VELATORIO,1,3),'-',LPAD(COUNT(FORM.ID_FORMATO_ACTIVIDAD)+1, 6,'0'))FROM SVT_FORMATO_ACTIVIDAD_PROMOTORES FORM JOIN SVC_VELATORIO SV ON FORM.ID_VELATORIO = SV.ID_VELATORIO WHERE FORM.ID_VELATORIO = "+this.idVelatorio+")");
 		q.agregarParametroValues("FEC_ELABORACION", "" +AppConstantes.CURRENT_TIMESTAMP +"" );
 		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "1");
@@ -173,7 +174,7 @@ public class RegistrarActividad {
 		Map<String, Object> parametro = new HashMap<>();
 		final QueryHelper q = new QueryHelper("INSERT INTO SVT_ACTIVIDAD_PROMOTORES");
 		q.agregarParametroValues("ID_FORMATO_ACTIVIDAD", ""+idFormato+"");	
-		q.agregarParametroValues("FEC_ACTIVIDAD", "'"+actividades.getFecActividad()+"'");
+		q.agregarParametroValues("FEC_ACTIVIDAD", "'"+fecActividad+"'");
 		q.agregarParametroValues("TIM_HORA_INICIO", setValor(actividades.getHrInicio()));
 		q.agregarParametroValues("TIM_HORA_FIN", setValor(actividades.getHrFin()));
 		q.agregarParametroValues("ID_PROMOTOR", "" +actividades.getIdPromotor() + "");
@@ -218,11 +219,11 @@ public class RegistrarActividad {
 	}
 
 
-	public DatosRequest verDetalleActividades(DatosRequest request, Integer idFormato, Integer pagina, Integer tamanio) {
+	public DatosRequest verDetalleActividades(DatosRequest request, Integer idFormato, Integer pagina, Integer tamanio, String fecFormat) {
 		Map<String, Object> parametros = new HashMap<>();
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("PROM.ID_REGISTRO_ACTIVIDAD AS idActividad",
-				"PROM.FEC_ACTIVIDAD AS fecActividad",
+				"DATE_FORMAT(PROM.FEC_ACTIVIDAD, '"+fecFormat+"') AS fecActividad",
 				"PROM.ID_FORMATO_ACTIVIDAD AS idFormato",
 				 "PROM.TIM_HORA_INICIO AS hrInicio",
 				 "PROM.TIM_HORA_FIN AS hrFin",

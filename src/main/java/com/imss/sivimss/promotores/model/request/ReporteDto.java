@@ -14,15 +14,15 @@ import lombok.Setter;
 @Setter
 @Getter
 @JsonIgnoreType(value = true)
-public class FiltrosPromotorActividadesRequest {
-
-	private Integer idActividad;
+public class ReporteDto {
+	
 	private Integer idVelatorio;
 	private Integer idDelegacion;
 	private String folio;
 	private String fecInicio;
 	private String fecFin;
-	private Integer idCatalogo;
-	private String tamanio;
-	private String pagina;
+	private String rutaNombreReporte;
+	private String tipoReporte;
+
+
 }

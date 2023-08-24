@@ -2,6 +2,7 @@ package com.imss.sivimss.promotores.service.impl;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Map;
 import java.util.logging.Level;
 
 import javax.xml.bind.DatatypeConverter;
@@ -20,6 +21,7 @@ import com.imss.sivimss.promotores.exception.BadRequestException;
 import com.imss.sivimss.promotores.model.request.FiltrosPromotorActividadesRequest;
 import com.imss.sivimss.promotores.model.request.FiltrosPromotorRequest;
 import com.imss.sivimss.promotores.model.request.RegistrarFormatoActividadesRequest;
+import com.imss.sivimss.promotores.model.request.ReporteDto;
 import com.imss.sivimss.promotores.model.request.UsuarioDto;
 import com.imss.sivimss.promotores.service.RegistrarActividadService;
 import com.imss.sivimss.promotores.util.AppConstantes;
@@ -50,6 +52,8 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 	private String urlInsertarMultiple;
 	@Value("${endpoints.rutas.dominio-actualizar}")
 	private String urlActualizar;
+	@Value("${endpoints.ms-reportes}")
+	private String urlReportes;
 	@Value("${formato-fecha}")
 	private String fecFormat;
 	
@@ -59,6 +63,7 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 	private static final String CONSULTA = "consulta";
 	private static final String INFORMACION_INCOMPLETA = "Informacion incompleta";
 	private static final String EXITO = "EXITO";
+	private static final String IMPRIMIR = "IMPRIMIR";
 
 	@Autowired
 	private ProviderServiceRestTemplate providerRestTemplate;
@@ -263,6 +268,20 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 				 throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 	    	}
 	    	return response;
+	}
+
+
+	@Override
+	public Response<?> descargarReporteActividades(DatosRequest request, Authentication authentication)
+			throws IOException, ParseException {
+		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
+		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+		ReporteDto reporte= gson.fromJson(datosJson, ReporteDto.class);
+		Map<String, Object> envioDatos = new RegistrarActividad().reporteActividades(reporte);
+		Response<?> response = providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes,
+				authentication);
+		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"SE GENERO CORRECRAMENTE EL REPORTE DE ACTIVIDADES", IMPRIMIR, authentication, usuario);
+		return response;
 	}
 
 }

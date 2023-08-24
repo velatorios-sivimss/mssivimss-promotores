@@ -1,6 +1,7 @@
 package com.imss.sivimss.promotores.beans;
 
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +9,8 @@ import javax.xml.bind.DatatypeConverter;
 
 import com.imss.sivimss.promotores.model.request.RegistrarActividadesRequest;
 import com.imss.sivimss.promotores.model.request.RegistrarFormatoActividadesRequest;
+import com.imss.sivimss.promotores.model.request.ReporteDto;
+import com.imss.sivimss.promotores.service.impl.GestionarPromotorImpl;
 import com.imss.sivimss.promotores.exception.BadRequestException;
 import com.imss.sivimss.promotores.model.request.FiltrosPromotorActividadesRequest;
 import com.imss.sivimss.promotores.util.AppConstantes;
@@ -313,6 +316,34 @@ public class RegistrarActividad {
 		return request;
 	}
 	
+	public Map<String, Object> reporteActividades(ReporteDto reporte) throws ParseException {
+		GestionarPromotorImpl prom = new GestionarPromotorImpl();
+		Map<String, Object> envioDatos = new HashMap<>();
+		StringBuilder condition= new StringBuilder();
+		if(reporte.getIdDelegacion()!=null) {
+			condition.append(" AND SV.ID_DELEGACION= "+reporte.getIdDelegacion()+"");
+		}
+	    if(reporte.getIdVelatorio()!=null) {
+			condition.append(" AND SV.ID_VELATORIO = "+reporte.getIdVelatorio()+"");
+		}
+	    if(reporte.getFolio()!=null) {
+			condition.append(" AND FORM.DES_FOLIO = '"+reporte.getFolio()+"'");
+		}
+	    if (reporte.getFecInicio()!=null) {
+	    	String fecConsultaInicio = prom.formatFecha(reporte.getFecInicio());
+    		String fecConsultaFin = prom.formatFecha(reporte.getFecFin());
+			condition.append(" AND FORM.FEC_ELABORACION BETWEEN '" + fecConsultaInicio+"' AND '"+fecConsultaFin+"'");
+		} 
+	    log.info("->" +condition.toString());
+		envioDatos.put("condition", condition.toString());		
+		envioDatos.put("rutaNombreReporte", reporte.getRutaNombreReporte());
+		envioDatos.put("tipoReporte", reporte.getTipoReporte());
+		if(reporte.getTipoReporte().equals("xls")) {
+			envioDatos.put("IS_IGNORE_PAGINATION", true);
+		}
+		return envioDatos;
+	}
+	
 	private static String encodedQuery(String query) {
         return DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
     }
@@ -329,6 +360,5 @@ public class RegistrarActividad {
 	private static String obtieneQuery(SelectQueryUtil queryUtil) {
         return queryUtil.build();
 	}
-
 
 }

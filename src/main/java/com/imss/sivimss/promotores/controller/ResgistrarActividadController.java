@@ -91,6 +91,17 @@ public class ResgistrarActividadController {
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
       
 	}
+	
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	@PostMapping("/catalogo")
+	public CompletableFuture<?> verCatalogo(@RequestBody DatosRequest request,Authentication authentication) throws IOException{
+		Response<?> response = registrarActividad.catalogos(request,authentication);
+		return CompletableFuture
+				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+      
+	}
 
 	/**
 	 * fallbacks generico

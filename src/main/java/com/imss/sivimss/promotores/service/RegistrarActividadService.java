@@ -20,4 +20,6 @@ public interface RegistrarActividadService {
 
 	Response<?> detalleFormatoActividades(DatosRequest request, Authentication authentication) throws IOException;
 
+	Response<?> catalogos(DatosRequest request, Authentication authentication) throws IOException;
+
 }

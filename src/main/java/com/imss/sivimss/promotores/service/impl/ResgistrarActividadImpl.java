@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.imss.sivimss.promotores.beans.RegistrarActividad;
 import com.imss.sivimss.promotores.exception.BadRequestException;
 import com.imss.sivimss.promotores.model.request.FiltrosPromotorActividadesRequest;
+import com.imss.sivimss.promotores.model.request.FiltrosPromotorRequest;
 import com.imss.sivimss.promotores.model.request.RegistrarFormatoActividadesRequest;
 import com.imss.sivimss.promotores.model.request.UsuarioDto;
 import com.imss.sivimss.promotores.service.RegistrarActividadService;
@@ -238,6 +239,25 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 				authentication), EXITO);
 		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"REGISTRO ELIMINADO CORRECTAMENTE", BAJA, authentication, usuario);
 		return response;
+	}
+
+
+	@Override
+	public Response<?> catalogos(DatosRequest request, Authentication authentication) throws IOException {
+		Response<?> response;
+		String datosJson = String.valueOf(request.getDatos().get("datos"));
+		FiltrosPromotorActividadesRequest filtros = gson.fromJson(datosJson, FiltrosPromotorActividadesRequest.class);
+	    	UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+	    
+			      if(filtros.getIdCatalogo() ==1) {
+	    		response = providerRestTemplate.consumirServicio(registrarActividad.catalogoPromotores(request, filtros.getIdVelatorio()).getDatos(), urlConsulta,
+						authentication);
+			        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"CATALOGO PROMOTORES OK", CONSULTA, authentication, usuario);
+	    	}else {
+	    		 logUtil.crearArchivoLog(Level.WARNING.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"INFORMACION INCOMPLETA", CONSULTA, authentication, usuario);
+				 throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
+	    	}
+	    	return response;
 	}
 
 }

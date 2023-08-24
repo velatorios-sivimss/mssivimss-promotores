@@ -8,6 +8,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import com.imss.sivimss.promotores.model.request.RegistrarActividadesRequest;
 import com.imss.sivimss.promotores.model.request.RegistrarFormatoActividadesRequest;
+import com.imss.sivimss.promotores.exception.BadRequestException;
 import com.imss.sivimss.promotores.model.request.FiltrosPromotorActividadesRequest;
 import com.imss.sivimss.promotores.util.AppConstantes;
 import com.imss.sivimss.promotores.util.DatosRequest;
@@ -256,24 +257,6 @@ public class RegistrarActividad {
 		return request;
 	}
 	
-
-	private static String encodedQuery(String query) {
-        return DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
-    }
-
-	private String setValor(String valor) {
-        if (valor==null || valor.equals("")) {
-            return "NULL";
-        }else {
-            return "'"+valor+"'";
-        }
-    }
-
-	
-	private static String obtieneQuery(SelectQueryUtil queryUtil) {
-        return queryUtil.build();
-	}
-
 	public DatosRequest buscarFormato(Integer idActividad) {
 		DatosRequest request = new DatosRequest();
 		Map<String, Object> parametros = new HashMap<>();
@@ -308,5 +291,43 @@ public class RegistrarActividad {
         request.setDatos(parametro);
         return request;
 	}
+
+
+
+	public DatosRequest catalogoPromotores(DatosRequest request, Integer idVelatorio) {
+		Map<String, Object> parametros = new HashMap<>();
+		SelectQueryUtil queryUtil = new SelectQueryUtil();
+		queryUtil.select("SP.ID_PROMOTOR AS idPromotor",
+				"SP.NOM_PROMOTOR AS nomPromotor")
+		.from("SVT_PROMOTOR SP");
+			queryUtil.where("SP.IND_ACTIVO=1");
+			if(idVelatorio!=null) {
+				queryUtil.where("SP.ID_VELATORIO ="+idVelatorio);
+			}
+		String query = obtieneQuery(queryUtil);
+		log.info("catalogo "+query);
+		String encoded = encodedQuery(query);
+	    parametros.put(AppConstantes.QUERY, encoded);
+	    request.setDatos(parametros);
+		return request;
+	}
+	
+	private static String encodedQuery(String query) {
+        return DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
+    }
+
+	private String setValor(String valor) {
+        if (valor==null || valor.equals("")) {
+            return "NULL";
+        }else {
+            return "'"+valor+"'";
+        }
+    }
+
+	
+	private static String obtieneQuery(SelectQueryUtil queryUtil) {
+        return queryUtil.build();
+	}
+
 
 }

@@ -22,6 +22,7 @@ public class FiltrosPromotorActividadesRequest {
 	private String folio;
 	private String fecInicio;
 	private String fecFin;
+	private Integer idCatalogo;
 	private String tamanio;
 	private String pagina;
 }

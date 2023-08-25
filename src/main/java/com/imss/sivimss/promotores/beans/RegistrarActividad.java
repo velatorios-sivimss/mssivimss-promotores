@@ -302,7 +302,8 @@ public class RegistrarActividad {
 		Map<String, Object> parametros = new HashMap<>();
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("SP.ID_PROMOTOR AS idPromotor",
-				"SP.NOM_PROMOTOR AS nomPromotor")
+				"CONCAT(SP.NOM_PROMOTOR, ' ',"
+				+ "SP.NOM_PAPELLIDO, ' ', SP.NOM_SAPELLIDO) AS nomPromotor")
 		.from("SVT_PROMOTOR SP");
 			queryUtil.where("SP.IND_ACTIVO=1");
 			if(idVelatorio!=null) {

@@ -18,6 +18,8 @@ public class ReporteDto {
 	
 	private Integer idVelatorio;
 	private Integer idDelegacion;
+	private Integer idFormato;
+	private Integer idRol;
 	private String folio;
 	private String fecInicio;
 	private String fecFin;

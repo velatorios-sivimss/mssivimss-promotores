@@ -344,6 +344,16 @@ public class RegistrarActividad {
 		return envioDatos;
 	}
 	
+	public Map<String, Object> formatoActividades(ReporteDto reporte) {
+		Map<String, Object> envioDatos = new HashMap<>();
+		envioDatos.put("idFormato", reporte.getIdFormato());
+		envioDatos.put("idVelatorio", reporte.getIdVelatorio());
+		envioDatos.put("idRol", reporte.getIdRol());
+		envioDatos.put("rutaNombreReporte", "reportes/plantilla/Anexo_14_Formato_De_Promocion_Difusion.jrxml");
+		envioDatos.put("tipoReporte", "pdf");
+		return envioDatos;
+	}
+	
 	private static String encodedQuery(String query) {
         return DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
     }

@@ -19,7 +19,6 @@ import com.google.gson.Gson;
 import com.imss.sivimss.promotores.beans.RegistrarActividad;
 import com.imss.sivimss.promotores.exception.BadRequestException;
 import com.imss.sivimss.promotores.model.request.FiltrosPromotorActividadesRequest;
-import com.imss.sivimss.promotores.model.request.FiltrosPromotorRequest;
 import com.imss.sivimss.promotores.model.request.RegistrarFormatoActividadesRequest;
 import com.imss.sivimss.promotores.model.request.ReporteDto;
 import com.imss.sivimss.promotores.model.request.UsuarioDto;
@@ -278,6 +277,21 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		ReporteDto reporte= gson.fromJson(datosJson, ReporteDto.class);
 		Map<String, Object> envioDatos = new RegistrarActividad().reporteActividades(reporte);
+		Response<?> response = providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes,
+				authentication);
+		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"SE GENERO CORRECRAMENTE EL REPORTE DE ACTIVIDADES", IMPRIMIR, authentication, usuario);
+		return response;
+	}
+
+
+	@Override
+	public Response<?> generarFormato(DatosRequest request, Authentication authentication) throws IOException {
+		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
+		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+		ReporteDto reporte= gson.fromJson(datosJson, ReporteDto.class);
+		reporte.setIdRol(usuario.getIdRol());
+		reporte.setIdVelatorio(usuario.getIdVelatorio());
+		Map<String, Object> envioDatos = new RegistrarActividad().formatoActividades(reporte);
 		Response<?> response = providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes,
 				authentication);
 		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"SE GENERO CORRECRAMENTE EL REPORTE DE ACTIVIDADES", IMPRIMIR, authentication, usuario);

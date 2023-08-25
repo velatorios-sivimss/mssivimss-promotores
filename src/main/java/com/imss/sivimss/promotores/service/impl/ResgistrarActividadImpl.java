@@ -125,7 +125,7 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 		
 			try {
 				if(actividadesRequest.getActividades().getIdActividad()!=null) {
-					if(!validarDias(actividadesRequest.getActividades().getIdActividad(), authentication)) {
+					if(validarDias(actividadesRequest.getActividades().getIdActividad(), authentication)) {
 				       response.setCodigo(200);
 				       response.setError(true);
 				       response.setMensaje("5");
@@ -237,7 +237,7 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 			Object rst=response.getDatos();
 			return !rst.toString().equals("[]");	
 			}
-		return false;
+		return true;
 	}
 
 	@Override

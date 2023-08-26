@@ -19,7 +19,6 @@ import com.google.gson.Gson;
 import com.imss.sivimss.promotores.beans.RegistrarActividad;
 import com.imss.sivimss.promotores.exception.BadRequestException;
 import com.imss.sivimss.promotores.model.request.FiltrosPromotorActividadesRequest;
-import com.imss.sivimss.promotores.model.request.FiltrosPromotorRequest;
 import com.imss.sivimss.promotores.model.request.RegistrarFormatoActividadesRequest;
 import com.imss.sivimss.promotores.model.request.ReporteDto;
 import com.imss.sivimss.promotores.model.request.UsuarioDto;
@@ -125,7 +124,7 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 		
 			try {
 				if(actividadesRequest.getActividades().getIdActividad()!=null) {
-					if(!validarDias(actividadesRequest.getActividades().getIdActividad(), authentication)) {
+					if(validarDias(actividadesRequest.getActividades().getIdActividad(), authentication)) {
 				       response.setCodigo(200);
 				       response.setError(true);
 				       response.setMensaje("5");
@@ -139,11 +138,16 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 					logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"FORMATO DE ACTIVIDADES REGISTRADO CORRECTAMENTE", ALTA, authentication, usuario);
 					if(response.getCodigo()==200) {
 					Integer idFormato = Integer.parseInt(response.getDatos().toString());
-					 providerRestTemplate.consumirServicio(registrarActividad.insertarActividad(actividadesRequest.getActividades(), idFormato).getDatos(), urlCrear, authentication);
+					Response<?> responseActividad = providerRestTemplate.consumirServicio(registrarActividad.insertarActividad(actividadesRequest.getActividades(), actividadesRequest.getIdFormato(), idFormato).getDatos(), urlInsertarMultiple, authentication);
 					 logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"REGISTRO AGREGADO CORRECTAMENTE", ALTA, authentication, usuario);
+					if(responseActividad.getCodigo()==200) {
+						responseActividad = response;
+						return responseActividad;
+					}
 					}
 				}else if(actividadesRequest.getIdFormato() !=null){
-					 response = providerRestTemplate.consumirServicio(registrarActividad.insertarActividad(actividadesRequest.getActividades(), actividadesRequest.getIdFormato()).getDatos(), urlCrear, authentication);
+					Integer idForma=null;
+					 response = providerRestTemplate.consumirServicio(registrarActividad.insertarActividad(actividadesRequest.getActividades(), actividadesRequest.getIdFormato(), idForma).getDatos(), urlCrear, authentication);
 					 logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"REGISTRO AGREGADO CORRECTAMENTE", ALTA, authentication, usuario);
 				}
 					return response;
@@ -156,33 +160,6 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 			}
 	}
 	
-	/*
-	@Override
-	public Response<?> actualizarFormato(DatosRequest request, Authentication authentication) throws IOException {
-		Response<?> response = new Response<>();
-		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
-		RegistrarFormatoActividadesRequest actividadesRequest =  gson.fromJson(datosJson, RegistrarFormatoActividadesRequest.class);	
-		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-		
-		registrarActividad=new RegistrarActividad(actividadesRequest);
-		registrarActividad.setIdUsuario(usuario.getIdUsuario());
-	/*	if(!validarDias(actividadesRequest.getIdFormato(), authentication)) {
-			response.setCodigo(200);
-			response.setError(true);
-			response.setMensaje("5");
-			response.setDatos(null);
-		} 
-		try {
-				response = providerRestTemplate.consumirServicio(registrarActividad.actualizarRegistroActividades().getDatos(), urlInsertarMultiple, authentication);		
-					return response;
-			}catch (Exception e) {
-				String consulta = registrarActividad.actualizarRegistroActividades().getDatos().get("query").toString();
-				String encoded = new String(DatatypeConverter.parseBase64Binary(consulta));
-				log.error("Error al ejecutar la query" +encoded);
-				logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"error", MODIFICACION, authentication, usuario);
-				throw new IOException("5", e.getCause()) ;
-			}
-	} */
 
 	@Override
 	public Response<?> detalleFormatoActividades(DatosRequest request, Authentication authentication)
@@ -237,7 +214,7 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 			Object rst=response.getDatos();
 			return !rst.toString().equals("[]");	
 			}
-		return false;
+		return true;
 	}
 
 	@Override
@@ -278,6 +255,21 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		ReporteDto reporte= gson.fromJson(datosJson, ReporteDto.class);
 		Map<String, Object> envioDatos = new RegistrarActividad().reporteActividades(reporte);
+		Response<?> response = providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes,
+				authentication);
+		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"SE GENERO CORRECRAMENTE EL REPORTE DE ACTIVIDADES", IMPRIMIR, authentication, usuario);
+		return response;
+	}
+
+
+	@Override
+	public Response<?> generarFormato(DatosRequest request, Authentication authentication) throws IOException {
+		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
+		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+		ReporteDto reporte= gson.fromJson(datosJson, ReporteDto.class);
+		reporte.setIdRol(usuario.getIdRol());
+		reporte.setIdVelatorio(usuario.getIdVelatorio());
+		Map<String, Object> envioDatos = new RegistrarActividad().formatoActividades(reporte);
 		Response<?> response = providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes,
 				authentication);
 		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"SE GENERO CORRECRAMENTE EL REPORTE DE ACTIVIDADES", IMPRIMIR, authentication, usuario);

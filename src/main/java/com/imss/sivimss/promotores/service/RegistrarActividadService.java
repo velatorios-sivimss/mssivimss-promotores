@@ -24,4 +24,6 @@ public interface RegistrarActividadService {
 
 	Response<?> descargarReporteActividades(DatosRequest request, Authentication authentication) throws IOException, ParseException;
 
+	Response<?> generarFormato(DatosRequest request, Authentication authentication) throws IOException;
+
 }

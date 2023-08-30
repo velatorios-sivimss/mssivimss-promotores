@@ -106,7 +106,7 @@ public class RegistrarActividad {
 		q.agregarParametroValues("ID_VELATORIO", ""+this.getIdVelatorio()+"");
 		q.agregarParametroValues("FEC_INICIO", "'"+fecInicio+"'");
 		q.agregarParametroValues("FEC_FIN", "'"+fecFin+"'");
-		q.agregarParametroValues("DES_FOLIO", "(SELECT CONCAT(SUBSTRING(SV.DES_VELATORIO,1,3),'-',LPAD(COUNT(FORM.ID_FORMATO_ACTIVIDAD)+1, 6,'0'))FROM SVT_FORMATO_ACTIVIDAD_PROMOTORES FORM JOIN SVC_VELATORIO SV ON FORM.ID_VELATORIO = SV.ID_VELATORIO WHERE FORM.ID_VELATORIO = "+this.idVelatorio+" AND FORM.IND_ACTIVO=1)");
+		q.agregarParametroValues("DES_FOLIO", "(SELECT CONCAT(LPAD(COUNT(FORM.ID_FORMATO_ACTIVIDAD)+1, 5,'0'),'-',SV.ID_VELATORIO) FROM SVT_FORMATO_ACTIVIDAD_PROMOTORES FORM JOIN SVC_VELATORIO SV ON FORM.ID_VELATORIO = SV.ID_VELATORIO WHERE FORM.ID_VELATORIO = "+this.idVelatorio+" AND FORM.IND_ACTIVO=1)");
 		q.agregarParametroValues("FEC_ELABORACION", "" +AppConstantes.CURRENT_TIMESTAMP +"" );
 		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "0");
 	    q.agregarParametroValues("ID_USUARIO_ALTA", "" +idUsuario+ "");

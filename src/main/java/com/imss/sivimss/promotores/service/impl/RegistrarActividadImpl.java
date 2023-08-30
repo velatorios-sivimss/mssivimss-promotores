@@ -34,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class ResgistrarActividadImpl implements RegistrarActividadService {
+public class RegistrarActividadImpl implements RegistrarActividadService {
 
 	@Autowired
 	private LogUtil logUtil;
@@ -68,10 +68,12 @@ public class ResgistrarActividadImpl implements RegistrarActividadService {
 	private ProviderServiceRestTemplate providerRestTemplate;
 	
 	Gson gson = new Gson();
-	RegistrarActividad registrarActividad=new RegistrarActividad();
 	
 	@Autowired
 	private ModelMapper modelMapper;
+	RegistrarActividad registrarActividad=new RegistrarActividad();
+	
+	
 	
 	
 	@Override

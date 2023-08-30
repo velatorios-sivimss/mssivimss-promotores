@@ -168,15 +168,19 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 		promotores.setFecIngreso(formatFecha(promoRequest.getFecIngreso()));
 		promotores.setIdUsuario(usuario.getIdUsuario());
 		try {
-			if(promoRequest.getFecPromotorDiasDescanso()==null) {
+			if(promoRequest.getFecPromotorDiasDescanso().isEmpty()) {
 				Response<?> response =  providerRestTemplate.consumirServicio(promotores.actualizarPromotor(promoRequest).getDatos(), urlActualizar, authentication);
-				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"PROMOTOR MODIFICADO CORRECTAMENTE", ALTA, authentication, usuario);
+				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"PROMOTOR MODIFICADO CORRECTAMENTE", MODIFICACION, authentication, usuario);
+				if(response.getCodigo()==200) {
+					 providerRestTemplate.consumirServicio(promotores.bajaDescansos(promoRequest.getIdPromotor()).getDatos(), urlActualizar, authentication);
+						logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"DIAS DE DESCANSO MODIFICADOS CORRECTAMENTE", MODIFICACION, authentication, usuario);
+				}
 				return response;
 			}else {
 				
 				Response<?> response = providerRestTemplate.consumirServicio(promotores.actualizarPromotor(promoRequest).getDatos(), urlInsertarMultiple,
 					 authentication);
-				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"PROMOTOR MODIFICADO CORRECTAMENTE", ALTA, authentication, usuario);
+				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"PROMOTOR MODIFICADO CORRECTAMENTE", MODIFICACION, authentication, usuario);
 				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"DIAS DE DESCANSOS AGREGADOS CORRECTAMENTE", ALTA, authentication, usuario);
 				return response;
 			
@@ -219,12 +223,6 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 			
 	}
 	
-	    public String formatFecha(String fecha) throws ParseException {
-		Date dateF = new SimpleDateFormat("dd/MM/yyyy").parse(fecha);
-		DateFormat fecForma = new SimpleDateFormat("yyyy-MM-dd", new Locale("es", "MX"));
-		return fecForma.format(dateF);       
-	}
-
 		@Override
 		public Response<?> buscarPorNombre(DatosRequest request, Authentication authentication) throws IOException {
 			Response<?> response;
@@ -252,6 +250,12 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 					 throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 		    	}
 		    	return response;
+		}
+		
+	    public String formatFecha(String fecha) throws ParseException {
+			Date dateF = new SimpleDateFormat("dd/MM/yyyy").parse(fecha);
+			DateFormat fecForma = new SimpleDateFormat("yyyy-MM-dd", new Locale("es", "MX"));
+			return fecForma.format(dateF);       
 		}
 
 }

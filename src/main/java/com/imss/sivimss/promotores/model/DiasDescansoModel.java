@@ -11,6 +11,7 @@ import lombok.Setter;
 @Getter
 public class DiasDescansoModel {
 
-	  private Integer id;
+	    private Integer id;
 		private String fecDescanso;
+		   private Integer estatus;
 }

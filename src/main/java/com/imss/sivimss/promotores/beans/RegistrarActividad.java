@@ -130,10 +130,10 @@ public class RegistrarActividad {
 		q.agregarParametroValues("TIM_HORA_FIN", setValor(actividad.getHrFin()));
 		q.agregarParametroValues("ID_PROMOTOR", "" +actividad.getIdPromotor() + "");
 		q.agregarParametroValues("NUM_PLATICAS", ""+ actividad.getNumPlaticas()+"");
-		q.agregarParametroValues("DES_UNIDAD_IMSS", setValor(actividad.getUnidad()));
-		q.agregarParametroValues("DES_EMPRESA", setValor(actividad.getEmpresa()));
-		q.agregarParametroValues("DES_ACTIVIDAD_REALIZADA", setValor(actividad.getActividadRealizada()));
-		q.agregarParametroValues("DES_OBSERVACIONES", setValor(actividad.getObservaciones()));
+		q.agregarParametroValues("REF_UNIDAD_IMSS", setValor(actividad.getUnidad()));
+		q.agregarParametroValues("REF_EMPRESA", setValor(actividad.getEmpresa()));
+		q.agregarParametroValues("REF_ACTIVIDAD_REALIZADA", setValor(actividad.getActividadRealizada()));
+		q.agregarParametroValues("REF_OBSERVACIONES", setValor(actividad.getObservaciones()));
 		q.agregarParametroValues("IND_EVIDENCIA", ""+actividad.getEvidencia()+"");
 		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "1");
 		q.agregarParametroValues("ID_USUARIO_MODIFICA", "" +idUsuario+ "");
@@ -157,10 +157,10 @@ public class RegistrarActividad {
 		q.agregarParametroValues("TIM_HORA_FIN", setValor(actividades.getHrFin()));
 		q.agregarParametroValues("ID_PROMOTOR", "" +actividades.getIdPromotor() + "");
 		q.agregarParametroValues("NUM_PLATICAS", ""+ actividades.getNumPlaticas()+"");
-		q.agregarParametroValues("DES_UNIDAD_IMSS", setValor(actividades.getUnidad()));
-		q.agregarParametroValues("DES_EMPRESA", setValor(actividades.getEmpresa()));
-		q.agregarParametroValues("DES_ACTIVIDAD_REALIZADA", setValor(actividades.getActividadRealizada()));
-		q.agregarParametroValues("DES_OBSERVACIONES", setValor(actividades.getObservaciones()));
+		q.agregarParametroValues("REF_UNIDAD_IMSS", setValor(actividades.getUnidad()));
+		q.agregarParametroValues("REF_EMPRESA", setValor(actividades.getEmpresa()));
+		q.agregarParametroValues("REF_ACTIVIDAD_REALIZADA", setValor(actividades.getActividadRealizada()));
+		q.agregarParametroValues("REF_OBSERVACIONES", setValor(actividades.getObservaciones()));
 		q.agregarParametroValues("IND_EVIDENCIA", ""+actividades.getEvidencia()+"");
 		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "1");
 		q.agregarParametroValues("ID_USUARIO_ALTA", "" +idUsuario+ "");
@@ -240,10 +240,10 @@ public class RegistrarActividad {
 				+ "SP.NOM_PAPELLIDO,' ', SP.NOM_SAPELLIDO) AS nomPromotor",
 				 "SP.DES_PUESTO AS puesto",
 				 "PROM.NUM_PLATICAS AS numPlaticas",
-				 "PROM.DES_UNIDAD_IMSS AS unidad",
-				 "PROM.DES_EMPRESA AS empresa",
-				 "PROM.DES_ACTIVIDAD_REALIZADA AS actividadRealizada",
-				 "PROM.DES_OBSERVACIONES AS observaciones",
+				 "PROM.REF_UNIDAD_IMSS AS unidad",
+				 "PROM.REF_EMPRESA AS empresa",
+				 "PROM.REF_ACTIVIDAD_REALIZADA AS actividadRealizada",
+				 "PROM.REF_OBSERVACIONES AS observaciones",
 				 "PROM.IND_EVIDENCIA AS evidencia")
 		.from(SVT_ACTIVIDAD_PROMOTORES)
 		.join(SVT_FORMATO_ACTIVIDAD_PROMOTORES, "PROM.ID_FORMATO_ACTIVIDAD = FORM.ID_FORMATO_ACTIVIDAD")

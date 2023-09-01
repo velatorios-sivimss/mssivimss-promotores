@@ -71,9 +71,8 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 	
 	@Autowired
 	private ModelMapper modelMapper;
+	
 	RegistrarActividad registrarActividad=new RegistrarActividad();
-	
-	
 	
 	
 	@Override

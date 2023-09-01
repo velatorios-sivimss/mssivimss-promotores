@@ -34,7 +34,6 @@ public class ReportePromotorController {
     @TimeLimiter(name = "msflujo")
     @PostMapping("/buscar-reportes")
     public CompletableFuture<?> buscarReportes(@RequestBody DatosRequest request, Authentication authentication) throws IOException{
-        log.info("controller");
         Response<?> response = servicio.buscarReportes(request, authentication);
         return CompletableFuture
                 .supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));

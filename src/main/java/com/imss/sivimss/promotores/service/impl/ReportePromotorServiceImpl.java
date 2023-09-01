@@ -31,11 +31,9 @@ public class ReportePromotorServiceImpl implements ReportePromotorService {
 
     @Override
     public Response<?> buscarReportes(DatosRequest request, Authentication authentication) throws IOException {
-        log.info(request.getDatos().toString());
         JsonObject jsonObject = JsonParser.parseString((String) request.getDatos().get(AppConstantes.DATOS)).getAsJsonObject();
         Response<?> response = new Response<>();
         String tipoReporte = jsonObject.get("tipoReporte").getAsString();
-        log.info("service - " + tipoReporte);
         List<InformacionReportesModel> infoReportes;
         Response<?> responseReportes = providerRestTemplate.consumirServicio(reporte.buscarReportes(tipoReporte).getDatos(), consultas + "/consulta", authentication);
         infoReportes = Arrays.asList(modelMapper.map(responseReportes.getDatos(), InformacionReportesModel[].class));

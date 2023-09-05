@@ -321,7 +321,7 @@ public class RegistrarActividad {
 		return request;
 	}
 	
-	public Map<String, Object> reporteActividades(ReporteDto reporte) throws ParseException {
+	public Map<String, Object> reporteActividades(ReporteDto reporte, String reporteActiv) throws ParseException {
 		GestionarPromotorImpl prom = new GestionarPromotorImpl();
 		Map<String, Object> envioDatos = new HashMap<>();
 		StringBuilder condition= new StringBuilder();
@@ -342,19 +342,19 @@ public class RegistrarActividad {
 	    log.info("->" +condition.toString());
 		envioDatos.put("condition", condition.toString());		
 		envioDatos.put("tipoReporte", reporte.getTipoReporte());
-		envioDatos.put("rutaNombreReporte", "reportes/generales/ReporteRegistroActividades.jrxml");
+		envioDatos.put("rutaNombreReporte", reporteActiv);
 		if(reporte.getTipoReporte().equals("xls")) {
 			envioDatos.put("IS_IGNORE_PAGINATION", true);
 		}
 		return envioDatos;
 	}
 	
-	public Map<String, Object> formatoActividades(ReporteDto reporte) {
+	public Map<String, Object> formatoActividades(ReporteDto reporte, String anexo) {
 		Map<String, Object> envioDatos = new HashMap<>();
 		envioDatos.put("idFormato", reporte.getIdFormato());
 		envioDatos.put("idVelatorio", reporte.getIdVelatorio());
 		envioDatos.put("idRol", reporte.getIdRol());
-		envioDatos.put("rutaNombreReporte", "reportes/plantilla/Anexo_14_Formato_De_Promocion_Difusion.jrxml");
+		envioDatos.put("rutaNombreReporte", anexo);
 		envioDatos.put("tipoReporte", "pdf");
 		return envioDatos;
 	}

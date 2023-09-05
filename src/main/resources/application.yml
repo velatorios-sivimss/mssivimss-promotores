@@ -40,8 +40,8 @@ endpoints:
       dominio-insertar-multiple: ${endpoints.mod-catalogos}/insertarMultiple
 
 data:
-  anexo-prom-difusion: ${msit_ANEXO_PROM_DIFUSION}
-  reporte-registro-activ: ${msit_REGISTRO_ACTIV}
+  msit_ANEXO_PROM_DIFUSION: ${msit_ANEXO_PROM_DIFUSION}
+  msit_REGISTRO_ACTIV: ${msit_REGISTRO_ACTIV}
 
 jwt:
   secretkey-flujo: ${msit_SECRET_KEY}

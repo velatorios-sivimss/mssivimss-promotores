@@ -55,9 +55,9 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 	private String urlReportes;
 	@Value("${formato-fecha}")
 	private String fecFormat;
-	@Value("${plantilla.anexo-prom-difusion}")
+	@Value("${data.msit_ANEXO_PROM_DIFUSION}")
 	private String anexo;
-	@Value("${generales.reporte-registro-activ}")
+	@Value("${data.msit_REGISTRO_ACTIV}")
 	private String reporteActiv;
 	
 	private static final String BAJA = "baja";

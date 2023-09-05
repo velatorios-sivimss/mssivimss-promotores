@@ -39,10 +39,8 @@ endpoints:
       dominio-actualizar: ${endpoints.mod-catalogos}/actualizar
       dominio-insertar-multiple: ${endpoints.mod-catalogos}/insertarMultiple
 
-plantilla:
+data:
   anexo-prom-difusion: ${msit_ANEXO_PROM_DIFUSION}
-
-generales:
   reporte-registro-activ: ${msit_REGISTRO_ACTIV}
 
 jwt:

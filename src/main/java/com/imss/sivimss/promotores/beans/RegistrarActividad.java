@@ -49,7 +49,7 @@ public class RegistrarActividad {
 	}
 	
 	//Tablas
-	private static final String SVT_FORMATO_ACTIVIDAD_PROMOTORES = "SVT_FORMATO_ACTIVIDAD_PROMOTORES FORM";
+	private static final String SVT_FORMATO_ACTIVIDAD_PROMOTORES = "SVT_FORMATO_ACTIVIDAD_PROM FORM";
 	private static final String SVT_ACTIVIDAD_PROMOTORES = "SVT_ACTIVIDAD_PROMOTORES PROM";
 	private static final String SVC_VELATORIO = "SVC_VELATORIO SV";
 	
@@ -102,13 +102,13 @@ public class RegistrarActividad {
 	public DatosRequest insertarFormatoActividades(RegistrarActividadesRequest actividades) {
 		DatosRequest request = new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
-		final QueryHelper q = new QueryHelper("INSERT INTO SVT_FORMATO_ACTIVIDAD_PROMOTORES");
+		final QueryHelper q = new QueryHelper("INSERT INTO SVT_FORMATO_ACTIVIDAD_PROM");
 		q.agregarParametroValues("ID_VELATORIO", ""+this.getIdVelatorio()+"");
 		q.agregarParametroValues("FEC_INICIO", "'"+fecInicio+"'");
 		q.agregarParametroValues("FEC_FIN", "'"+fecFin+"'");
 		q.agregarParametroValues("DES_FOLIO", "(SELECT CONCAT(LPAD(COUNT(FORM.ID_FORMATO_ACTIVIDAD)+1, 5,'0'),'-', "
 				+ "(SELECT SV.ID_VELATORIO FROM SVC_VELATORIO SV WHERE ID_VELATORIO = "+this.idVelatorio+")) "
-				+ "FROM SVT_FORMATO_ACTIVIDAD_PROMOTORES FORM "
+				+ "FROM SVT_FORMATO_ACTIVIDAD_PROM FORM "
 				+ "JOIN SVC_VELATORIO SV ON FORM.ID_VELATORIO = SV.ID_VELATORIO WHERE FORM.IND_ACTIVO=1)");
 		q.agregarParametroValues("FEC_ELABORACION", "" +AppConstantes.CURRENT_TIMESTAMP +"" );
 		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "0");
@@ -191,7 +191,7 @@ public class RegistrarActividad {
 	private String actualizarPadre(Integer idFormatoResponse) {
 		DatosRequest request = new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
-		final QueryHelper q = new QueryHelper("UPDATE SVT_FORMATO_ACTIVIDAD_PROMOTORES");
+		final QueryHelper q = new QueryHelper("UPDATE SVT_FORMATO_ACTIVIDAD_PROM");
 		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "1");
 		q.addWhere("ID_FORMATO_ACTIVIDAD = " +idFormatoResponse);
 		String query = q.obtenerQueryActualizar();

@@ -307,7 +307,8 @@ public class RegistrarActividad {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("SP.ID_PROMOTOR AS idPromotor",
 				"CONCAT(SP.NOM_PROMOTOR, ' ',"
-				+ "SP.NOM_PAPELLIDO, ' ', SP.NOM_SAPELLIDO) AS nomPromotor")
+				+ "SP.NOM_PAPELLIDO, ' ', SP.NOM_SAPELLIDO) AS nomPromotor",
+				"SP.DES_PUESTO AS puesto")
 		.from("SVT_PROMOTOR SP");
 			queryUtil.where("SP.IND_ACTIVO=1");
 			if(idVelatorio!=null) {

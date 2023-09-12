@@ -49,7 +49,7 @@ public class RegistrarActividad {
 	}
 	
 	//Tablas
-	private static final String SVT_FORMATO_ACTIVIDAD_PROMOTORES = "SVT_FORMATO_ACTIVIDAD_PROMOTORES FORM";
+	private static final String SVT_FORMATO_ACTIVIDAD_PROMOTORES = "SVT_FORMATO_ACTIVIDAD_PROM FORM";
 	private static final String SVT_ACTIVIDAD_PROMOTORES = "SVT_ACTIVIDAD_PROMOTORES PROM";
 	private static final String SVC_VELATORIO = "SVC_VELATORIO SV";
 	
@@ -65,7 +65,7 @@ public class RegistrarActividad {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("FORM.ID_FORMATO_ACTIVIDAD AS idFormatoRegistro",
 				"DATE_FORMAT(FORM.FEC_ELABORACION, '"+fecFormat+"') AS fecElaboracion",
-				"CONCAT(FORM.ID_VELATORIO, ' ', SV.DES_VELATORIO) AS Velatorio",
+				"CONCAT(FORM.ID_VELATORIO, ' ', SV.DES_VELATORIO) AS velatorio",
 				"FORM.DES_FOLIO AS folio",
 				"SUM(PROM.NUM_PLATICAS) AS numActividades",
 				"IF(TIMESTAMPDIFF(DAY, FORM.FEC_ELABORACION, CURDATE())>7, FALSE, TRUE) AS banderaModificar")
@@ -102,11 +102,14 @@ public class RegistrarActividad {
 	public DatosRequest insertarFormatoActividades(RegistrarActividadesRequest actividades) {
 		DatosRequest request = new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
-		final QueryHelper q = new QueryHelper("INSERT INTO SVT_FORMATO_ACTIVIDAD_PROMOTORES");
+		final QueryHelper q = new QueryHelper("INSERT INTO SVT_FORMATO_ACTIVIDAD_PROM");
 		q.agregarParametroValues("ID_VELATORIO", ""+this.getIdVelatorio()+"");
 		q.agregarParametroValues("FEC_INICIO", "'"+fecInicio+"'");
 		q.agregarParametroValues("FEC_FIN", "'"+fecFin+"'");
-		q.agregarParametroValues("DES_FOLIO", "(SELECT CONCAT(LPAD(COUNT(FORM.ID_FORMATO_ACTIVIDAD)+1, 5,'0'),'-',SV.ID_VELATORIO) FROM SVT_FORMATO_ACTIVIDAD_PROMOTORES FORM JOIN SVC_VELATORIO SV ON FORM.ID_VELATORIO = SV.ID_VELATORIO WHERE FORM.ID_VELATORIO = "+this.idVelatorio+" AND FORM.IND_ACTIVO=1)");
+		q.agregarParametroValues("DES_FOLIO", "(SELECT CONCAT(LPAD(COUNT(FORM.ID_FORMATO_ACTIVIDAD)+1, 5,'0'),'-', "
+				+ "(SELECT SV.ID_VELATORIO FROM SVC_VELATORIO SV WHERE ID_VELATORIO = "+this.idVelatorio+")) "
+				+ "FROM SVT_FORMATO_ACTIVIDAD_PROM FORM "
+				+ "JOIN SVC_VELATORIO SV ON FORM.ID_VELATORIO = SV.ID_VELATORIO WHERE FORM.IND_ACTIVO=1)");
 		q.agregarParametroValues("FEC_ELABORACION", "" +AppConstantes.CURRENT_TIMESTAMP +"" );
 		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "0");
 	    q.agregarParametroValues("ID_USUARIO_ALTA", "" +idUsuario+ "");
@@ -188,7 +191,7 @@ public class RegistrarActividad {
 	private String actualizarPadre(Integer idFormatoResponse) {
 		DatosRequest request = new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
-		final QueryHelper q = new QueryHelper("UPDATE SVT_FORMATO_ACTIVIDAD_PROMOTORES");
+		final QueryHelper q = new QueryHelper("UPDATE SVT_FORMATO_ACTIVIDAD_PROM");
 		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "1");
 		q.addWhere("ID_FORMATO_ACTIVIDAD = " +idFormatoResponse);
 		String query = q.obtenerQueryActualizar();
@@ -304,7 +307,8 @@ public class RegistrarActividad {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("SP.ID_PROMOTOR AS idPromotor",
 				"CONCAT(SP.NOM_PROMOTOR, ' ',"
-				+ "SP.NOM_PAPELLIDO, ' ', SP.NOM_SAPELLIDO) AS nomPromotor")
+				+ "SP.NOM_PAPELLIDO, ' ', SP.NOM_SAPELLIDO) AS nomPromotor",
+				"SP.DES_PUESTO AS puesto")
 		.from("SVT_PROMOTOR SP");
 			queryUtil.where("SP.IND_ACTIVO=1");
 			if(idVelatorio!=null) {
@@ -318,7 +322,7 @@ public class RegistrarActividad {
 		return request;
 	}
 	
-	public Map<String, Object> reporteActividades(ReporteDto reporte) throws ParseException {
+	public Map<String, Object> reporteActividades(ReporteDto reporte, String reporteActiv) throws ParseException {
 		GestionarPromotorImpl prom = new GestionarPromotorImpl();
 		Map<String, Object> envioDatos = new HashMap<>();
 		StringBuilder condition= new StringBuilder();
@@ -339,19 +343,19 @@ public class RegistrarActividad {
 	    log.info("->" +condition.toString());
 		envioDatos.put("condition", condition.toString());		
 		envioDatos.put("tipoReporte", reporte.getTipoReporte());
-		envioDatos.put("rutaNombreReporte", "reportes/generales/ReporteRegistroActividades.jrxml");
+		envioDatos.put("rutaNombreReporte", reporteActiv);
 		if(reporte.getTipoReporte().equals("xls")) {
 			envioDatos.put("IS_IGNORE_PAGINATION", true);
 		}
 		return envioDatos;
 	}
 	
-	public Map<String, Object> formatoActividades(ReporteDto reporte) {
+	public Map<String, Object> formatoActividades(ReporteDto reporte, String anexo) {
 		Map<String, Object> envioDatos = new HashMap<>();
 		envioDatos.put("idFormato", reporte.getIdFormato());
 		envioDatos.put("idVelatorio", reporte.getIdVelatorio());
 		envioDatos.put("idRol", reporte.getIdRol());
-		envioDatos.put("rutaNombreReporte", "reportes/plantilla/Anexo_14_Formato_De_Promocion_Difusion.jrxml");
+		envioDatos.put("rutaNombreReporte", anexo);
 		envioDatos.put("tipoReporte", "pdf");
 		return envioDatos;
 	}

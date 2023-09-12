@@ -55,6 +55,10 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 	private String urlReportes;
 	@Value("${formato-fecha}")
 	private String fecFormat;
+	@Value("${data.msit_ANEXO_PROM_DIFUSION}")
+	private String anexo;
+	@Value("${data.msit_REGISTRO_ACTIV}")
+	private String reporteActiv;
 	
 	private static final String BAJA = "baja";
 	private static final String ALTA = "alta";
@@ -255,7 +259,7 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		ReporteDto reporte= gson.fromJson(datosJson, ReporteDto.class);
-		Map<String, Object> envioDatos = new RegistrarActividad().reporteActividades(reporte);
+		Map<String, Object> envioDatos = new RegistrarActividad().reporteActividades(reporte, reporteActiv);
 		Response<?> response = providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes,
 				authentication);
 		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"SE GENERO CORRECRAMENTE EL REPORTE DE ACTIVIDADES", IMPRIMIR, authentication, usuario);
@@ -270,7 +274,7 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 		ReporteDto reporte= gson.fromJson(datosJson, ReporteDto.class);
 		reporte.setIdRol(usuario.getIdRol());
 		reporte.setIdVelatorio(usuario.getIdVelatorio());
-		Map<String, Object> envioDatos = new RegistrarActividad().formatoActividades(reporte);
+		Map<String, Object> envioDatos = new RegistrarActividad().formatoActividades(reporte, anexo);
 		Response<?> response = providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes,
 				authentication);
 		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"SE GENERO CORRECRAMENTE EL REPORTE DE ACTIVIDADES", IMPRIMIR, authentication, usuario);

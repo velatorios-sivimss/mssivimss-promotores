@@ -32,7 +32,7 @@ public class ReportePromotorController {
     @CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
     @Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
     @TimeLimiter(name = "msflujo")
-    @PostMapping("/buscar-reportes")
+    @PostMapping("/generar-reporte-comsiones")
     public CompletableFuture<?> buscarReportes(@RequestBody DatosRequest request, Authentication authentication) throws IOException{
         Response<?> response = servicio.buscarReportes(request, authentication);
         return CompletableFuture

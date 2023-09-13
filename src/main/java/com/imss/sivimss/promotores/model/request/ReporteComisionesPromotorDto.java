@@ -10,10 +10,10 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ReporteComisionesPromotorDto {
 	
-	private Integer idDelegacion;
-	private Integer idVelatorio;
+	private Integer id_delegacion;
+	private Integer id_velatorio;
 	private String ods;
-	private Integer idPromotor;
+	private Integer id_promotor;
 	private Integer anio;
 	private Integer mes;
 	private String nombreVelatorio;

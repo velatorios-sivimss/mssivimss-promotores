@@ -39,8 +39,8 @@ public class ReportePromotor {
 			query.append(" AND SM.NUM_MES_COMISION = ".concat(comisionesPromotorDto.getMes().toString()));
 		}
     	
-    	if (Objects.nonNull(comisionesPromotorDto.getIdPromotor())) {
-			query.append(" AND SM.ID_PROMOTOR = ".concat(comisionesPromotorDto.getIdPromotor().toString()));
+    	if (Objects.nonNull(comisionesPromotorDto.getId_promotor())) {
+			query.append(" AND SM.ID_PROMOTOR = ".concat(comisionesPromotorDto.getId_promotor().toString()));
 		}
     	
     	if (Objects.nonNull(comisionesPromotorDto.getOds())) {
@@ -51,12 +51,12 @@ public class ReportePromotor {
     	 id delegacion == null traer todas delegacion, no se le agrega el and delegacion
     	 id velatorio == null no se agrega el and
     	 * */
-    	if (Objects.nonNull(comisionesPromotorDto.getIdVelatorio())) {
-    		query.append(" AND SPO.ID_VELATORIO =  ".concat(comisionesPromotorDto.getIdVelatorio().toString()));
+    	if (Objects.nonNull(comisionesPromotorDto.getId_velatorio())) {
+    		query.append(" AND SPO.ID_VELATORIO =  ".concat(comisionesPromotorDto.getId_velatorio().toString()));
     	}
     	
-    	if (Objects.nonNull(comisionesPromotorDto.getIdDelegacion())) {
-    		query.append(" AND SPO.ID_DELEGACION = ".concat(comisionesPromotorDto.getIdDelegacion().toString()));
+    	if (Objects.nonNull(comisionesPromotorDto.getId_delegacion())) {
+    		query.append(" AND SPO.ID_DELEGACION = ".concat(comisionesPromotorDto.getId_delegacion().toString()));
     	}
     	params.put("consultaOrdenes", query.toString());
     	params.put("periodo", comisionesPromotorDto.getMes()+"/"+comisionesPromotorDto.getAnio());

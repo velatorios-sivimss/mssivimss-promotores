@@ -37,6 +37,7 @@ endpoints:
 data:
   msit_ANEXO_PROM_DIFUSION: ${msit_ANEXO_PROM_DIFUSION}
   msit_REGISTRO_ACTIV: ${msit_REPORTE_REGISTRO_ACTIV}
+  msit_COMISION_PROMOTOR: ${msit_COMISION_PROMOTOR}
 
 jwt:
   secretkey-flujo: ${msit_SECRET_KEY}

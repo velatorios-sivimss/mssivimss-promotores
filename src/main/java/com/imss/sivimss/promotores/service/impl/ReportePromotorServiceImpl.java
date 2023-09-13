@@ -48,8 +48,8 @@ public class ReportePromotorServiceImpl implements ReportePromotorService {
         
         ReporteComisionesPromotorDto reporteComisionesPromotorDto = gson.fromJson(datosJson, ReporteComisionesPromotorDto.class);
     
-        Map<String, Object> envioDatos = ReportePromotor.generarReporteComision(reporteComisionesPromotorDto);
-        return providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes.concat(nombreReporteComision),
+        Map<String, Object> envioDatos = ReportePromotor.generarReporteComision(reporteComisionesPromotorDto,nombreReporteComision);
+        return providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes,
                 authentication);
     }
 }

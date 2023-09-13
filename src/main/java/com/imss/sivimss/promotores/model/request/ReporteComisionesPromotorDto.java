@@ -17,5 +17,6 @@ public class ReporteComisionesPromotorDto {
 	private Integer anio;
 	private Integer mes;
 	private String nombreVelatorio;
+	private String tipoReporte;
 	
 }

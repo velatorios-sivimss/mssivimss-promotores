@@ -27,24 +27,24 @@ public class ReportePromotor {
         return dr;
     }
     
-    public static Map<String, Object> generarReporteComision(ReporteComisionesPromotorDto comisionesPromotorDto) {
+    public static Map<String, Object> generarReporteComision(ReporteComisionesPromotorDto comisionesPromotorDto, String reporte) {
     	Map<String, Object>params= new HashMap<>();
     	StringBuilder query= new StringBuilder("");
     	
     	if (Objects.nonNull(comisionesPromotorDto.getAnio())) {
-			query.append("AND SM.NUM_ANIO_COMISION = ".concat(comisionesPromotorDto.getAnio().toString()));
+			query.append(" AND SM.NUM_ANIO_COMISION = ".concat(comisionesPromotorDto.getAnio().toString()));
 		}
     	
     	if (Objects.nonNull(comisionesPromotorDto.getMes())) {
-			query.append("AND SM.NUM_MES_COMISION = ".concat(comisionesPromotorDto.getMes().toString()));
+			query.append(" AND SM.NUM_MES_COMISION = ".concat(comisionesPromotorDto.getMes().toString()));
 		}
     	
     	if (Objects.nonNull(comisionesPromotorDto.getIdPromotor())) {
-			query.append("AND SM.ID_PROMOTOR = ".concat(comisionesPromotorDto.getIdPromotor().toString()));
+			query.append(" AND SM.ID_PROMOTOR = ".concat(comisionesPromotorDto.getIdPromotor().toString()));
 		}
     	
     	if (Objects.nonNull(comisionesPromotorDto.getOds())) {
-			query.append("AND SOS.CVE_FOLIO = ".concat(comisionesPromotorDto.getOds()));
+			query.append(" AND SOS.CVE_FOLIO = ".concat(comisionesPromotorDto.getOds()));
 		}
 
     	/*
@@ -52,15 +52,18 @@ public class ReportePromotor {
     	 id velatorio == null no se agrega el and
     	 * */
     	if (Objects.nonNull(comisionesPromotorDto.getIdVelatorio())) {
-    		query.append("AND SPO.ID_VELATORIO =  ".concat(comisionesPromotorDto.getIdVelatorio().toString()));
+    		query.append(" AND SPO.ID_VELATORIO =  ".concat(comisionesPromotorDto.getIdVelatorio().toString()));
     	}
     	
     	if (Objects.nonNull(comisionesPromotorDto.getIdDelegacion())) {
-    		query.append("AND SPO.ID_DELEGACION = ".concat(comisionesPromotorDto.getIdDelegacion().toString()));
+    		query.append(" AND SPO.ID_DELEGACION = ".concat(comisionesPromotorDto.getIdDelegacion().toString()));
     	}
     	params.put("consultaOrdenes", query.toString());
     	params.put("periodo", comisionesPromotorDto.getMes()+"/"+comisionesPromotorDto.getAnio());
     	params.put("velatorio", comisionesPromotorDto.getNombreVelatorio());
+    	params.put("rutaNombreReporte", reporte);
+    	params.put("tipoReporte", comisionesPromotorDto.getTipoReporte());
+    	log.info(params.get("consultaOrdenes").toString());
     	return params;
     }
     

@@ -65,7 +65,7 @@ public class RegistrarActividad {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("FORM.ID_FORMATO_ACTIVIDAD AS idFormatoRegistro",
 				"DATE_FORMAT(FORM.FEC_ELABORACION, '"+fecFormat+"') AS fecElaboracion",
-				"CONCAT(FORM.ID_VELATORIO, ' ', SV.DES_VELATORIO) AS velatorio",
+				"SV.DES_VELATORIO AS velatorio",
 				"FORM.DES_FOLIO AS folio",
 				"SUM(PROM.NUM_PLATICAS) AS numActividades",
 				"IF(TIMESTAMPDIFF(DAY, FORM.FEC_ELABORACION, CURDATE())>7, FALSE, TRUE) AS banderaModificar")

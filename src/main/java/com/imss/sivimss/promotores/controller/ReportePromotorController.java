@@ -38,6 +38,16 @@ public class ReportePromotorController {
         return CompletableFuture
                 .supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
     }
+    
+    @CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @TimeLimiter(name = "msflujo")
+    @PostMapping("/consultar-promotores")
+    public CompletableFuture<?> obtenerPromotor(@RequestBody DatosRequest request, Authentication authentication) throws IOException{
+        Response<?> response = servicio.obtenerPromotores(request, authentication);
+        return CompletableFuture
+                .supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+    }
 
 
     /**

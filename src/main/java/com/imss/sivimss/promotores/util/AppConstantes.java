@@ -34,6 +34,12 @@ public class AppConstantes {
 	public static final String ID_USUARIO_MODIFICA  = "ID_USUARIO_MODIFICA";
 	public static final String ID_USUARIO_BAJA  = "ID_USUARIO_BAJA";
 	
+	public static final String CONSULTA = "consulta";
+	public static final String ERROR_QUERY = "Error al ejecutar el query ";
+	public static final String ERROR_LOG_QUERY = "Fallo al ejecutar el query:  ";
+	public static final String ERROR_CONSULTAR = "52";//Error al consultar la información.
+	public static final String ERROR_GUARDAR = "5";//Error al guardar la información. Intenta nuevamente.
+	
 	private AppConstantes() {
 	    throw new IllegalStateException("AppConstantes class");
 	  }

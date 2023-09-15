@@ -19,7 +19,6 @@ import com.imss.sivimss.promotores.beans.Promotor;
 import com.imss.sivimss.promotores.beans.ReportePromotor;
 import com.imss.sivimss.promotores.model.request.ReporteComisionesPromotorDto;
 import com.imss.sivimss.promotores.model.request.UsuarioDto;
-import com.imss.sivimss.promotores.model.response.PromotorResponse;
 import com.imss.sivimss.promotores.model.response.PromotoresResponse;
 import com.imss.sivimss.promotores.service.ReportePromotorService;
 import com.imss.sivimss.promotores.util.AppConstantes;

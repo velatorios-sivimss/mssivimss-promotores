@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
+import com.imss.sivimss.promotores.beans.OrdenesServicio;
 import com.imss.sivimss.promotores.beans.Promotor;
 import com.imss.sivimss.promotores.beans.ReportePromotor;
 import com.imss.sivimss.promotores.model.request.ReporteComisionesPromotorDto;
@@ -53,6 +54,8 @@ public class ReportePromotorServiceImpl implements ReportePromotorService {
     
     Promotor promotor=Promotor.getInstancia();
 
+    OrdenesServicio ordenesServicio= OrdenesServicio.getInstance();
+    
     @Autowired
 	private LogUtil logUtil;
 
@@ -89,6 +92,29 @@ public class ReportePromotorServiceImpl implements ReportePromotorService {
 			}
 
 			return response;
+		} catch (Exception e) {
+			String consulta = promotor.consultarPromotores().getDatos().get(AppConstantes.QUERY).toString();
+	        String decoded = new String(DatatypeConverter.parseBase64Binary(consulta));
+	        log.error(AppConstantes.ERROR_QUERY.concat(decoded));
+	        log.error(e.getMessage());
+	        logUtil.crearArchivoLog(Level.WARNING.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), AppConstantes.ERROR_LOG_QUERY + decoded, AppConstantes.CONSULTA, authentication,usuario);
+	        throw new IOException(AppConstantes.ERROR_CONSULTAR, e.getCause());
+		}
+    }
+    
+    @Override
+    public Response<?> obtenerOrdenes(DatosRequest request, Authentication authentication) throws IOException {
+    	Gson gson= new Gson();
+	    UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+		try { 
+			logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(), 
+            		this.getClass().getPackage().toString(), "consultarOrdenes", AppConstantes.CONSULTA, authentication,usuario);
+
+			String datosJson=request.getDatos().get(AppConstantes.DATOS).toString();
+        
+	        ReporteComisionesPromotorDto reporteComisionesPromotorDto = gson.fromJson(datosJson, ReporteComisionesPromotorDto.class);
+	        return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(ordenesServicio.consultarOrdenes(reporteComisionesPromotorDto).getDatos(), urlConsulta,
+    				authentication), EXITO);
 		} catch (Exception e) {
 			String consulta = promotor.consultarPromotores().getDatos().get(AppConstantes.QUERY).toString();
 	        String decoded = new String(DatatypeConverter.parseBase64Binary(consulta));

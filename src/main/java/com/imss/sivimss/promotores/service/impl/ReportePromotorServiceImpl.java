@@ -64,12 +64,9 @@ public class ReportePromotorServiceImpl implements ReportePromotorService {
    
     @Override
     public Response<?> buscarReportes(DatosRequest request, Authentication authentication) throws IOException {
-        String datosJson = request.getDatos().get(AppConstantes.DATOS).toString();
-        
+        String datosJson = request.getDatos().get(AppConstantes.DATOS).toString();        
         Gson gson= new Gson();
-        
         ReporteComisionesPromotorDto reporteComisionesPromotorDto = gson.fromJson(datosJson, ReporteComisionesPromotorDto.class);
-    
         Map<String, Object> envioDatos = ReportePromotor.generarReporteComision(reporteComisionesPromotorDto,nombreReporteComision);
         return providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes,
                 authentication);

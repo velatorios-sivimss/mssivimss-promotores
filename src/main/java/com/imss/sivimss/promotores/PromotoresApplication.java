@@ -15,7 +15,7 @@ import com.imss.sivimss.promotores.util.NoRedirectSimpleClientHttpRequestFactory
 public class PromotoresApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PromotoresApplication.class, args);
+		SpringApplication.run(PromotoresApplication.class);
 	}
 
 	@Bean

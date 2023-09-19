@@ -37,7 +37,6 @@ public class RegistrarActividad {
 	private String fecInicio;
 	private String fecFin;
 	private String fecActividad;
-	//private RegistrarActividadesRequest actividades;
 	private Integer idUsuario;
 	
 	public RegistrarActividad(RegistrarFormatoActividadesRequest actividadRequest) {
@@ -45,7 +44,6 @@ public class RegistrarActividad {
 		this.idVelatorio = actividadRequest.getIdVelatorio();
 		this.fecInicio = actividadRequest.getFecInicio();
 		this.fecFin = actividadRequest.getFecFin();
-		//this.actividades = actividadRequest.getActividades();
 	}
 	
 	//Tablas
@@ -115,7 +113,7 @@ public class RegistrarActividad {
 	    q.agregarParametroValues("ID_USUARIO_ALTA", "" +idUsuario+ "");
 		q.agregarParametroValues("FEC_ALTA", "" +AppConstantes.CURRENT_TIMESTAMP +"");
 		log.info("-> " +actividades.toString());
-		String query = q.obtenerQueryInsertar(); //+ "$$" + insertarActividades(actividades);
+		String query = q.obtenerQueryInsertar();
 			log.info("estoy en resgistro actividades " +query);
 			String encoded = encodedQuery(query);
 				  parametro.put(AppConstantes.QUERY, encoded);

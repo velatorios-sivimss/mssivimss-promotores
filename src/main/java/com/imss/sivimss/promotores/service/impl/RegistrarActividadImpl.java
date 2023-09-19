@@ -7,7 +7,6 @@ import java.util.logging.Level;
 
 import javax.xml.bind.DatatypeConverter;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -72,10 +71,7 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 	private ProviderServiceRestTemplate providerRestTemplate;
 	
 	Gson gson = new Gson();
-	
-	@Autowired
-	private ModelMapper modelMapper;
-	
+
 	RegistrarActividad registrarActividad=new RegistrarActividad();
 	
 	
@@ -118,9 +114,6 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 	
 		registrarActividad=new RegistrarActividad(actividadesRequest);
 		registrarActividad.setIdUsuario(usuario.getIdUsuario());
-	/*	if(actividadesRequest.getFecInicio()==null || actividadesRequest.getFecFin()==null || actividadesRequest.getActividades().getFecActividad()==null) {
-			throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
-		} */
 		if(actividadesRequest.getFecInicio()!=null) {
 			registrarActividad.setFecInicio(prom.formatFecha(actividadesRequest.getFecInicio()));
 			registrarActividad.setFecFin(prom.formatFecha(actividadesRequest.getFecFin()));
@@ -191,25 +184,6 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
         logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),
 				this.getClass().getPackage().toString(), "Consulta actividades Ok", CONSULTA, authentication, usuario);
     	return response;
-	/*	UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-		Response<?> response = new Response<>();
-		List<FormatoResponse> formato;
-		List<ActividadesResponse> actividades;
-		// providerRestTemplate.consumirServicio(renovarBean.validarBeneficiarios(request, numConvenio, idContra, usuarioDto.getIdUsuario()).getDatos(), urlActualizar,authentication);
-		Response<?> responseDatosFormato = providerRestTemplate.consumirServicio(registrarActividad.datosFormato(request, idFormato, fecFormat, pagina, tamanio).getDatos(), urlPaginado,
-				authentication);
-		if(responseDatosFormato.getCodigo()==200) {
-			formato = Arrays.asList(modelMapper.map(responseDatosFormato.getDatos(), FormatoResponse[].class));
-			actividades = Arrays.asList(modelMapper.map(providerRestTemplate.consumirServicio(registrarActividad.buscarActividades(request, idFormato, pagina, tamanio).getDatos(), urlPaginado, authentication).getDatos(), ActividadesResponse[].class));  
-			logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),
-					this.getClass().getPackage().toString(), "Consulta Beneficiarios Ok", CONSULTA, authentication, usuario);
-			FormatoResponse datosFormato = formato.get(0);
-			datosFormato.setActividades(actividades);
-			 response.setDatos(ConvertirGenerico.convertInstanceOfObject(datosFormato));
-		}
-		    response.setCodigo(200);
-            response.setError(false);
-            response.setMensaje("Exito"); */
 	}
 	
 	private boolean validarDias(Integer idActividad, Authentication authentication) throws IOException {

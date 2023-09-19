@@ -51,7 +51,6 @@ public class GestionarPromotor {
 	private String desCategoria;
 	private Integer indEstatus;
 	private Integer idUsuario;
-    //private List<String> fecPromotorDiasDescanso;
 	private Integer indEstatusDescanso;
 	
 	public GestionarPromotor(PromotorRequest promoRequest) {
@@ -71,7 +70,6 @@ public class GestionarPromotor {
 		this.desCategoria = promoRequest.getCategoria();
 		this.indEstatus = promoRequest.getEstatus();
 		this.idLugarNac = promoRequest.getIdLugarNac();
-		//this.fecPromotorDiasDescanso = promoRequest.getFecPromotorDiasDescanso(); 
 	}
 
     //TABLA	
@@ -219,7 +217,7 @@ public class GestionarPromotor {
 		if(promoRequest.getFecPromotorDiasDescanso()!=null) {
 			StringBuilder queries= new StringBuilder();
 			queries.append(query);
-			//for(int i=0; i<this.fecPromotorDiasDescanso.size(); i++) {
+			//for(int i=0; i<this.fecPromotorDiasDescanso.size(); i++)
 			for(DiasDescansoModel descansos: promoRequest.getFecPromotorDiasDescanso()) {
 		        String fecha=formatFecha(descansos.getFecDescanso());
 				queries.append("$$" + insertarDiasDescanso(fecha, this.idPromotor, descansos.getId(), descansos.getEstatus()));
@@ -312,13 +310,6 @@ public class GestionarPromotor {
 		q.agregarParametroValues("DES_CATEGORIA", setValor(this.desCategoria));
 		q.agregarParametroValues(""+AppConstantes.ID_USUARIO_MODIFICA+"", "" +idUsuario+ "");
 		q.agregarParametroValues(""+AppConstantes.FEC_ACTUALIZACION+"", "" +AppConstantes.CURRENT_TIMESTAMP + "");
-		/*if(this.indEstatus==0) {
-			q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "FALSE");
-			q.agregarParametroValues("FEC_BAJA", "" +AppConstantes.CURRENT_TIMESTAMP + "");
-			q.agregarParametroValues("ID_USUARIO_BAJA", "" + idUsuario + "");
-		}/else {
-			q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "TRUE");
-		}*/ 
 		q.addWhere(ID_PROMOTOR +"=" + this.idPromotor);
 		String query = q.obtenerQueryActualizar();
 		log.info(query);

@@ -3,7 +3,6 @@ package com.imss.sivimss.promotores.controller;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -116,7 +115,7 @@ public class ResgistrarActividadController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	@PostMapping("/generar/formato-actividades")
-	public CompletableFuture<?> generarFormatoActividades(@RequestBody DatosRequest request,Authentication authentication) throws IOException, ParseException{
+	public CompletableFuture<?> generarFormatoActividades(@RequestBody DatosRequest request,Authentication authentication) throws IOException{
 		Response<?> response = registrarActividad.generarFormato(request,authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));

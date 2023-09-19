@@ -70,9 +70,9 @@ public class RegistrarActividad {
 				"SUM(PROM.NUM_PLATICAS) AS numActividades",
 				"IF(TIMESTAMPDIFF(DAY, FORM.FEC_ELABORACION, CURDATE())>7, FALSE, TRUE) AS banderaModificar")
 		.from(SVT_FORMATO_ACTIVIDAD_PROMOTORES)
-		.join(SVT_ACTIVIDAD_PROMOTORES, "FORM.ID_FORMATO_ACTIVIDAD=PROM.ID_FORMATO_ACTIVIDAD")
+		.leftJoin(SVT_ACTIVIDAD_PROMOTORES, "FORM.ID_FORMATO_ACTIVIDAD=PROM.ID_FORMATO_ACTIVIDAD")
 		.join(SVC_VELATORIO, "FORM.ID_VELATORIO=SV.ID_VELATORIO");
-		queryUtil.where(ESTATUS_REGISTRO).and(ESTATUS_FORMATO);
+		queryUtil.where(ESTATUS_FORMATO);
 		if(filtros.getIdDelegacion()!=null) {
 			queryUtil.where("SV.ID_DELEGACION = "+ filtros.getIdDelegacion() + "");
 		}
@@ -210,11 +210,11 @@ public class RegistrarActividad {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("FORM.ID_FORMATO_ACTIVIDAD AS idFormato",
 				"DATE_FORMAT(FORM.FEC_ELABORACION, '"+fecFormat+"') AS fecElaboracion",
-				"CONCAT(FORM.ID_VELATORIO, ' ', SV.DES_VELATORIO) AS Velatorio",
+				"SV.DES_VELATORIO AS Velatorio",
 				"FORM.DES_FOLIO AS folio",
 				"FORM.FEC_INICIO AS fecInicio",
 				"FORM.FEC_FIN AS fecFin",
-				"SUM(PROM.NUM_PLATICAS) AS numActividades")
+				"IFNULL(SUM(PROM.NUM_PLATICAS), 0) AS numActividades")
 		.from(SVT_FORMATO_ACTIVIDAD_PROMOTORES)
 		.join(SVT_ACTIVIDAD_PROMOTORES, "FORM.ID_FORMATO_ACTIVIDAD = PROM.ID_FORMATO_ACTIVIDAD")
 		.join(SVC_VELATORIO, "FORM.ID_VELATORIO = SV.ID_VELATORIO");

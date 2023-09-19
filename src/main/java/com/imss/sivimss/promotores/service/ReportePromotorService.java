@@ -10,4 +10,6 @@ public interface ReportePromotorService {
     Response<?> buscarReportes(DatosRequest request, Authentication authentication) throws IOException;
 
 	Response<?> obtenerPromotores(DatosRequest request, Authentication authentication) throws IOException;
+
+	Response<?> obtenerOrdenes(DatosRequest request, Authentication authentication) throws IOException;
 }

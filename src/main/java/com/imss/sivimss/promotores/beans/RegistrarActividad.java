@@ -83,7 +83,7 @@ public class RegistrarActividad {
 		if(filtros.getFecInicio()!=null) {
 			queryUtil.where("FORM.FEC_ELABORACION BETWEEN '" + fecInicio+"'" ).and("'"+fecFin+"'");	
 		}
-		queryUtil.groupBy("FORM.ID_FORMATO_ACTIVIDAD ORDER BY FORM.FEC_ELABORACION ASC");
+		queryUtil.groupBy("FORM.ID_FORMATO_ACTIVIDAD ORDER BY FORM.FEC_ELABORACION ASC, FORM.ID_FORMATO_ACTIVIDAD ASC");
 		String query = obtieneQuery(queryUtil);
 		log.info("actividades promotores "+query);
 		String encoded = encodedQuery(query);
@@ -252,6 +252,7 @@ public class RegistrarActividad {
 		.join("SVT_PROMOTOR SP", "PROM.ID_PROMOTOR = SP.ID_PROMOTOR");
 		queryUtil.where(ESTATUS_REGISTRO).and(ESTATUS_FORMATO);
 		queryUtil.where("PROM.ID_FORMATO_ACTIVIDAD = " +idFormato);
+		queryUtil.orderBy("PROM.ID_REGISTRO_ACTIVIDAD DESC");
 		String query = obtieneQuery(queryUtil);
 		log.info("formato "+query); 
 		String encoded = encodedQuery(query);

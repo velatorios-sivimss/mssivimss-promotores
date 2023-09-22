@@ -81,7 +81,10 @@ public class RegistrarActividad {
 			queryUtil.where("FORM.DES_FOLIO = '" + filtros.getFolio()+ "'");	
 		}
 		if(filtros.getFecInicio()!=null) {
-			queryUtil.where("FORM.FEC_ELABORACION BETWEEN '" + fecInicio+"'" ).and("'"+fecFin+"'");	
+			queryUtil.where("FORM.FEC_ELABORACION >= '" + fecInicio+"'");
+		}
+		if(filtros.getFecFin()!=null) {
+			queryUtil.where("FORM.FEC_ELABORACION <= '"+fecFin+"'");
 		}
 		queryUtil.groupBy("FORM.ID_FORMATO_ACTIVIDAD ORDER BY FORM.FEC_ELABORACION ASC, FORM.ID_FORMATO_ACTIVIDAD ASC");
 		String query = obtieneQuery(queryUtil);

@@ -87,6 +87,8 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 	    	UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 	    	if(filtros.getFecInicio()!=null) {
 	    		registrarActividad.setFecInicio(prom.formatFecha(filtros.getFecInicio()));
+	    	}
+	    	if(filtros.getFecFin()!=null) {
 	    		registrarActividad.setFecFin(prom.formatFecha(filtros.getFecFin()));
 	    	}
 	    	Response<?> response = providerRestTemplate.consumirServicio(registrarActividad.buscarFormatoActividades(request, filtros, fecFormat).getDatos(), urlPaginado,

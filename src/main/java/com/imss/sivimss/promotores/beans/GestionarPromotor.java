@@ -103,9 +103,9 @@ public class GestionarPromotor {
 				"IF(TIMESTAMPDIFF(MONTH, PR.FEC_INGRESO, CURRENT_TIMESTAMP()) < 12, "
 				+ "CONCAT(TIMESTAMPDIFF(MONTH, PR.FEC_INGRESO, CURRENT_TIMESTAMP()), ' meses'), "
 				+ "CONCAT(TIMESTAMPDIFF(YEAR, PR.FEC_INGRESO, CURRENT_TIMESTAMP()), ' año (s)') )AS antiguedad",
-				"PR.DES_CORREO AS correo",
-				"PR.DES_PUESTO AS puesto",
-				"PR.DES_CATEGORIA AS categoria",
+				"PR.REF_CORREO AS correo",
+				"PR.REF_PUESTO AS puesto",
+				"PR.REF_CATEGORIA AS categoria",
 				"PR.IND_ACTIVO AS estatus")
 		.from(SVT_PROMOTOR)
 		.join(SVC_VELATORIO, "PR.ID_VELATORIO = SV.ID_VELATORIO")
@@ -155,9 +155,9 @@ public class GestionarPromotor {
 				"IF(TIMESTAMPDIFF(MONTH, PR.FEC_INGRESO, CURRENT_TIMESTAMP()) < 12, "
 				+ "CONCAT(TIMESTAMPDIFF(MONTH, PR.FEC_INGRESO, CURRENT_TIMESTAMP()), ' meses'), "
 				+ "CONCAT(TIMESTAMPDIFF(YEAR, PR.FEC_INGRESO, CURRENT_TIMESTAMP()), ' año (s)') )AS antiguedad",
-				"PR.DES_CORREO AS correo",
-				"PR.DES_PUESTO AS puesto",
-				"PR.DES_CATEGORIA AS categoria",
+				"PR.REF_CORREO AS correo",
+				"PR.REF_PUESTO AS puesto",
+				"PR.REF_CATEGORIA AS categoria",
 				"PR.IND_ACTIVO AS estatus")
 		.from(SVT_PROMOTOR)
 		.join("SVC_VELATORIO SV ", "PR.ID_VELATORIO = SV.ID_VELATORIO")
@@ -203,13 +203,13 @@ public class GestionarPromotor {
 		q.agregarParametroValues("NOM_SAPELLIDO", setValor(this.aMaterno));
 		q.agregarParametroValues("FEC_NACIMIENTO", "'" +fecNacimiento +"'");
 		q.agregarParametroValues("ID_ESTADO", "" +this.idLugarNac +"");
-		q.agregarParametroValues("DES_CORREO", setValor(this.desCorreo));
+		q.agregarParametroValues("REF_CORREO", setValor(this.desCorreo));
 		q.agregarParametroValues("NUM_EMPLEDO", "'" +this.numEmpleado + "'");
 		q.agregarParametroValues("FEC_INGRESO", "'" +fecIngreso +"'");
 		q.agregarParametroValues("MON_SUELDOBASE", ""+ this.monSueldoBase +"");
 		q.agregarParametroValues("ID_VELATORIO", "" + this.idVelatorio + "");
-		q.agregarParametroValues("DES_PUESTO", "'" + this.desPuesto + "'");
-		q.agregarParametroValues("DES_CATEGORIA", setValor(this.desCategoria));
+		q.agregarParametroValues("REF_PUESTO", "'" + this.desPuesto + "'");
+		q.agregarParametroValues("REF_CATEGORIA", setValor(this.desCategoria));
 		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "1");
 		q.agregarParametroValues("ID_USUARIO_ALTA", "" +idUsuario+ "");
 		q.agregarParametroValues("FEC_ALTA", "" +AppConstantes.CURRENT_TIMESTAMP + "");
@@ -302,12 +302,12 @@ public class GestionarPromotor {
 		DatosRequest request = new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
 		final QueryHelper q = new QueryHelper("UPDATE SVT_PROMOTOR");
-		q.agregarParametroValues("DES_CORREO", setValor(this.desCorreo));
+		q.agregarParametroValues("REF_CORREO", setValor(this.desCorreo));
 		q.agregarParametroValues("FEC_INGRESO", setValor(fecIngreso));
 		q.agregarParametroValues("MON_SUELDOBASE", ""+ this.monSueldoBase +"");
 		q.agregarParametroValues("ID_VELATORIO", "" + this.idVelatorio + "");
-		q.agregarParametroValues("DES_PUESTO", setValor(this.desPuesto));
-		q.agregarParametroValues("DES_CATEGORIA", setValor(this.desCategoria));
+		q.agregarParametroValues("REF_PUESTO", setValor(this.desPuesto));
+		q.agregarParametroValues("REF_CATEGORIA", setValor(this.desCategoria));
 		q.agregarParametroValues(""+AppConstantes.ID_USUARIO_MODIFICA+"", "" +idUsuario+ "");
 		q.agregarParametroValues(""+AppConstantes.FEC_ACTUALIZACION+"", "" +AppConstantes.CURRENT_TIMESTAMP + "");
 		q.addWhere(ID_PROMOTOR +"=" + this.idPromotor);

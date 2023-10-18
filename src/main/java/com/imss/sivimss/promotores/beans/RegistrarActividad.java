@@ -64,7 +64,7 @@ public class RegistrarActividad {
 		queryUtil.select("FORM.ID_FORMATO_ACTIVIDAD AS idFormatoRegistro",
 				"DATE_FORMAT(FORM.FEC_ELABORACION, '"+fecFormat+"') AS fecElaboracion",
 				"SV.DES_VELATORIO AS velatorio",
-				"FORM.DES_FOLIO AS folio",
+				"FORM.REF_FOLIO AS folio",
 				"IFNULL(SUM(PROM.NUM_PLATICAS), 0) AS numActividades",
 				"IF(TIMESTAMPDIFF(DAY, FORM.FEC_ELABORACION, CURDATE())>7, FALSE, TRUE) AS banderaModificar")
 		.from(SVT_FORMATO_ACTIVIDAD_PROMOTORES)
@@ -78,7 +78,7 @@ public class RegistrarActividad {
 			queryUtil.where("FORM.ID_VELATORIO = " + filtros.getIdVelatorio() + "");	
 		}
 		if(filtros.getFolio()!=null){
-			queryUtil.where("FORM.DES_FOLIO = '" + filtros.getFolio()+ "'");	
+			queryUtil.where("FORM.REF_FOLIO = '" + filtros.getFolio()+ "'");	
 		}
 		if(filtros.getFecInicio()!=null) {
 			queryUtil.where("FORM.FEC_ELABORACION >= '" + fecInicio+"'");
@@ -107,7 +107,7 @@ public class RegistrarActividad {
 		q.agregarParametroValues("ID_VELATORIO", ""+this.getIdVelatorio()+"");
 		q.agregarParametroValues("FEC_INICIO", "'"+fecInicio+"'");
 		q.agregarParametroValues("FEC_FIN", "'"+fecFin+"'");
-		q.agregarParametroValues("DES_FOLIO", "(SELECT CONCAT(LPAD(COUNT(FORM.ID_FORMATO_ACTIVIDAD)+1, 5,'0'),'-', "
+		q.agregarParametroValues("REF_FOLIO", "(SELECT CONCAT(LPAD(COUNT(FORM.ID_FORMATO_ACTIVIDAD)+1, 5,'0'),'-', "
 				+ "(SELECT SV.ID_VELATORIO FROM SVC_VELATORIO SV WHERE ID_VELATORIO = "+this.idVelatorio+")) "
 				+ "FROM SVT_FORMATO_ACTIVIDAD_PROM FORM "
 				+ "JOIN SVC_VELATORIO SV ON FORM.ID_VELATORIO = SV.ID_VELATORIO WHERE FORM.IND_ACTIVO=1)");
@@ -212,7 +212,7 @@ public class RegistrarActividad {
 		queryUtil.select("FORM.ID_FORMATO_ACTIVIDAD AS idFormato",
 				"DATE_FORMAT(FORM.FEC_ELABORACION, '"+fecFormat+"') AS fecElaboracion",
 				"SV.DES_VELATORIO AS Velatorio",
-				"FORM.DES_FOLIO AS folio",
+				"FORM.REF_FOLIO AS folio",
 				"FORM.FEC_INICIO AS fecInicio",
 				"FORM.FEC_FIN AS fecFin",
 				"IFNULL(SUM(PROM.NUM_PLATICAS), 0) AS numActividades")
@@ -242,7 +242,7 @@ public class RegistrarActividad {
 				 "SP.ID_PROMOTOR AS idPromotor",
 				 "CONCAT(SP.NOM_PROMOTOR, ' ',"
 				+ "SP.NOM_PAPELLIDO,' ', SP.NOM_SAPELLIDO) AS nomPromotor",
-				 "SP.DES_PUESTO AS puesto",
+				 "SP.REF_PUESTO AS puesto",
 				 "PROM.NUM_PLATICAS AS numPlaticas",
 				 "PROM.REF_UNIDAD_IMSS AS unidad",
 				 "PROM.REF_EMPRESA AS empresa",
@@ -310,7 +310,7 @@ public class RegistrarActividad {
 		queryUtil.select("SP.ID_PROMOTOR AS idPromotor",
 				"CONCAT(SP.NOM_PROMOTOR, ' ',"
 				+ "SP.NOM_PAPELLIDO, ' ', SP.NOM_SAPELLIDO) AS nomPromotor",
-				"SP.DES_PUESTO AS puesto")
+				"SP.REF_PUESTO AS puesto")
 		.from("SVT_PROMOTOR SP");
 			queryUtil.where("SP.IND_ACTIVO=1");
 			if(idVelatorio!=null) {
@@ -335,7 +335,7 @@ public class RegistrarActividad {
 			condition.append(" AND SV.ID_VELATORIO = "+reporte.getIdVelatorio()+"");
 		}
 	    if(reporte.getFolio()!=null) {
-			condition.append(" AND FORM.DES_FOLIO = '"+reporte.getFolio()+"'");
+			condition.append(" AND FORM.REF_FOLIO = '"+reporte.getFolio()+"'");
 		}
 	    if (reporte.getFecInicio()!=null) {
 	    	String fecConsultaInicio = prom.formatFecha(reporte.getFecInicio());

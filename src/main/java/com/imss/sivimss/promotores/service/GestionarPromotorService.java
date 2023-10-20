@@ -13,16 +13,16 @@ import com.imss.sivimss.promotores.util.Response;
 public interface GestionarPromotorService {
 	
 
-	Response<?> agregarPromotor(DatosRequest request, Authentication authentication)throws IOException, ParseException;
+	Response<Object> agregarPromotor(DatosRequest request, Authentication authentication)throws IOException, ParseException;
 
-	Response<?> actualizarPromotor(DatosRequest request, Authentication authentication)throws IOException, ParseException;
+	Response<Object> actualizarPromotor(DatosRequest request, Authentication authentication)throws IOException, ParseException;
 
-	Response<?> mostrarCatalogo(DatosRequest request, Authentication authentication)throws IOException;
+	Response<Object> mostrarCatalogo(DatosRequest request, Authentication authentication)throws IOException;
 
-	Response<?> verDetalle(DatosRequest request, Authentication authentication) throws IOException;
+	Response<Object> verDetalle(DatosRequest request, Authentication authentication) throws IOException;
 	
-	Response<?> cambiarEstatus(DatosRequest request, Authentication authentication) throws IOException;
+	Response<Object> cambiarEstatus(DatosRequest request, Authentication authentication) throws IOException;
 
-	Response<?> buscarPorNombre(DatosRequest request, Authentication authentication) throws IOException;
+	Response<Object> buscarPorNombre(DatosRequest request, Authentication authentication) throws IOException;
 
 }

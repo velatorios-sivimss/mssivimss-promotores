@@ -10,20 +10,20 @@ import com.imss.sivimss.promotores.util.Response;
 
 public interface RegistrarActividadService {
 
-	Response<?> agregarRegistroActividades(DatosRequest request, Authentication authentication) throws IOException, ParseException;
+	Response<Object> agregarRegistroActividades(DatosRequest request, Authentication authentication) throws IOException, ParseException;
 
-	Response<?> buscarFormatoActividades(DatosRequest request, Authentication authentication) throws IOException, ParseException;
+	Response<Object> buscarFormatoActividades(DatosRequest request, Authentication authentication) throws IOException, ParseException;
 
-	Response<?> detalleActividades(DatosRequest request, Authentication authentication)  throws IOException;
+	Response<Object> detalleActividades(DatosRequest request, Authentication authentication)  throws IOException;
 
-	Response<?> eliminarActividad(DatosRequest request, Authentication authentication) throws IOException;
+	Response<Object> eliminarActividad(DatosRequest request, Authentication authentication) throws IOException;
 
-	Response<?> detalleFormatoActividades(DatosRequest request, Authentication authentication) throws IOException;
+	Response<Object> detalleFormatoActividades(DatosRequest request, Authentication authentication) throws IOException;
 
-	Response<?> catalogos(DatosRequest request, Authentication authentication) throws IOException;
+	Response<Object> catalogos(DatosRequest request, Authentication authentication) throws IOException;
 
-	Response<?> descargarReporteActividades(DatosRequest request, Authentication authentication) throws IOException, ParseException;
+	Response<Object> descargarReporteActividades(DatosRequest request, Authentication authentication) throws IOException, ParseException;
 
-	Response<?> generarFormato(DatosRequest request, Authentication authentication) throws IOException;
+	Response<Object> generarFormato(DatosRequest request, Authentication authentication) throws IOException;
 
 }

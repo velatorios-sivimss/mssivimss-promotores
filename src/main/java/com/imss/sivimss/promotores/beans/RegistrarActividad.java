@@ -72,10 +72,10 @@ public class RegistrarActividad {
 		.join(SVC_VELATORIO, "FORM.ID_VELATORIO=SV.ID_VELATORIO");
 		queryUtil.where(ESTATUS_FORMATO);
 		if(filtros.getIdDelegacion()!=null) {
-			queryUtil.where("SV.ID_DELEGACION = "+ filtros.getIdDelegacion() + "");
+			queryUtil.where("SV.ID_DELEGACION = "+ filtros.getIdDelegacion());
 		}
 		if(filtros.getIdVelatorio()!=null){
-			queryUtil.where("FORM.ID_VELATORIO = " + filtros.getIdVelatorio() + "");	
+			queryUtil.where("FORM.ID_VELATORIO = " + filtros.getIdVelatorio());	
 		}
 		if(filtros.getFolio()!=null){
 			queryUtil.where("FORM.REF_FOLIO = '" + filtros.getFolio()+ "'");	
@@ -104,17 +104,17 @@ public class RegistrarActividad {
 		DatosRequest request = new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
 		final QueryHelper q = new QueryHelper("INSERT INTO SVT_FORMATO_ACTIVIDAD_PROM");
-		q.agregarParametroValues("ID_VELATORIO", ""+this.getIdVelatorio()+"");
+		q.agregarParametroValues("ID_VELATORIO", this.getIdVelatorio().toString());
 		q.agregarParametroValues("FEC_INICIO", "'"+fecInicio+"'");
 		q.agregarParametroValues("FEC_FIN", "'"+fecFin+"'");
 		q.agregarParametroValues("REF_FOLIO", "(SELECT CONCAT(LPAD(COUNT(FORM.ID_FORMATO_ACTIVIDAD)+1, 5,'0'),'-', "
 				+ "(SELECT SV.ID_VELATORIO FROM SVC_VELATORIO SV WHERE ID_VELATORIO = "+this.idVelatorio+")) "
 				+ "FROM SVT_FORMATO_ACTIVIDAD_PROM FORM "
 				+ "JOIN SVC_VELATORIO SV ON FORM.ID_VELATORIO = SV.ID_VELATORIO WHERE FORM.IND_ACTIVO=1)");
-		q.agregarParametroValues("FEC_ELABORACION", "" +AppConstantes.CURRENT_TIMESTAMP +"" );
-		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "0");
-	    q.agregarParametroValues("ID_USUARIO_ALTA", "" +idUsuario+ "");
-		q.agregarParametroValues("FEC_ALTA", "" +AppConstantes.CURRENT_TIMESTAMP +"");
+		q.agregarParametroValues("FEC_ELABORACION", AppConstantes.CURRENT_TIMESTAMP);
+		q.agregarParametroValues(AppConstantes.IND_ACTIVO, "0");
+	    q.agregarParametroValues("ID_USUARIO_ALTA", idUsuario.toString());
+		q.agregarParametroValues("FEC_ALTA", AppConstantes.CURRENT_TIMESTAMP);
 		log.info("-> " +actividades.toString());
 		String query = q.obtenerQueryInsertar();
 			log.info("estoy en resgistro actividades " +query);
@@ -132,16 +132,16 @@ public class RegistrarActividad {
 		q.agregarParametroValues("FEC_ACTIVIDAD", "'"+fecActividad+"'");
 		q.agregarParametroValues("TIM_HORA_INICIO", setValor(actividad.getHrInicio()));
 		q.agregarParametroValues("TIM_HORA_FIN", setValor(actividad.getHrFin()));
-		q.agregarParametroValues("ID_PROMOTOR", "" +actividad.getIdPromotor() + "");
+		q.agregarParametroValues("ID_PROMOTOR", actividad.getIdPromotor().toString());
 		q.agregarParametroValues("NUM_PLATICAS", ""+ actividad.getNumPlaticas()+"");
 		q.agregarParametroValues("REF_UNIDAD_IMSS", setValor(actividad.getUnidad()));
 		q.agregarParametroValues("REF_EMPRESA", setValor(actividad.getEmpresa()));
 		q.agregarParametroValues("REF_ACTIVIDAD_REALIZADA", setValor(actividad.getActividadRealizada()));
 		q.agregarParametroValues("REF_OBSERVACIONES", setValor(actividad.getObservaciones()));
 		q.agregarParametroValues("IND_EVIDENCIA", ""+actividad.getEvidencia()+"");
-		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "1");
-		q.agregarParametroValues("ID_USUARIO_MODIFICA", "" +idUsuario+ "");
-		q.agregarParametroValues("FEC_ACTUALIZACION", "" +AppConstantes.CURRENT_TIMESTAMP + "");
+		q.agregarParametroValues(AppConstantes.IND_ACTIVO, "1");
+		q.agregarParametroValues("ID_USUARIO_MODIFICA", idUsuario.toString());
+		q.agregarParametroValues("FEC_ACTUALIZACION", AppConstantes.CURRENT_TIMESTAMP);
 			q.addWhere("ID_REGISTRO_ACTIVIDAD = " +actividad.getIdActividad());
 		String query = q.obtenerQueryActualizar();
 		log.info("actualizar: " +query);
@@ -159,24 +159,24 @@ public class RegistrarActividad {
 		q.agregarParametroValues("FEC_ACTIVIDAD", "'"+fecActividad+"'");
 		q.agregarParametroValues("TIM_HORA_INICIO", setValor(actividades.getHrInicio()));
 		q.agregarParametroValues("TIM_HORA_FIN", setValor(actividades.getHrFin()));
-		q.agregarParametroValues("ID_PROMOTOR", "" +actividades.getIdPromotor() + "");
+		q.agregarParametroValues("ID_PROMOTOR", actividades.getIdPromotor().toString());
 		q.agregarParametroValues("NUM_PLATICAS", ""+ actividades.getNumPlaticas()+"");
 		q.agregarParametroValues("REF_UNIDAD_IMSS", setValor(actividades.getUnidad()));
 		q.agregarParametroValues("REF_EMPRESA", setValor(actividades.getEmpresa()));
 		q.agregarParametroValues("REF_ACTIVIDAD_REALIZADA", setValor(actividades.getActividadRealizada()));
 		q.agregarParametroValues("REF_OBSERVACIONES", setValor(actividades.getObservaciones()));
 		q.agregarParametroValues("IND_EVIDENCIA", ""+actividades.getEvidencia()+"");
-		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "1");
-		q.agregarParametroValues("ID_USUARIO_ALTA", "" +idUsuario+ "");
-		q.agregarParametroValues("FEC_ALTA", "" +AppConstantes.CURRENT_TIMESTAMP + "");
+		q.agregarParametroValues(AppConstantes.IND_ACTIVO, "1");
+		q.agregarParametroValues("ID_USUARIO_ALTA", idUsuario.toString());
+		q.agregarParametroValues("FEC_ALTA", AppConstantes.CURRENT_TIMESTAMP);
 		if(idFormato!=null) {
-			q.agregarParametroValues("ID_FORMATO_ACTIVIDAD", ""+idFormato+"");	
+			q.agregarParametroValues("ID_FORMATO_ACTIVIDAD", idFormato.toString());	
 			query = q.obtenerQueryInsertar();	
 			log.info("insertar: "+query);
 			 String encoded = encodedQuery(query);
 			  parametro.put(AppConstantes.QUERY, encoded);
 		}else {
-			q.agregarParametroValues("ID_FORMATO_ACTIVIDAD", ""+idFormatoResponse+"");		
+			q.agregarParametroValues("ID_FORMATO_ACTIVIDAD", idFormatoResponse.toString());		
 			query = q.obtenerQueryInsertar() +"$$" +actualizarPadre(idFormatoResponse);	
 			log.info("insertarMultiple: "+query);
 			 String encoded = encodedQuery(query);
@@ -190,17 +190,10 @@ public class RegistrarActividad {
 	
 	
 	private String actualizarPadre(Integer idFormatoResponse) {
-		DatosRequest request = new DatosRequest();
-		Map<String, Object> parametro = new HashMap<>();
 		final QueryHelper q = new QueryHelper("UPDATE SVT_FORMATO_ACTIVIDAD_PROM");
-		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "1");
+		q.agregarParametroValues(AppConstantes.IND_ACTIVO, "1");
 		q.addWhere("ID_FORMATO_ACTIVIDAD = " +idFormatoResponse);
-		String query = q.obtenerQueryActualizar();
-		log.info("ActualizarPadre"+query);
-		  String encoded = encodedQuery(query);
-		  parametro.put(AppConstantes.QUERY, encoded);
-        request.setDatos(parametro);
-        return query;
+		return q.obtenerQueryActualizar();
 	}
 
 
@@ -220,7 +213,7 @@ public class RegistrarActividad {
 		.join(SVT_ACTIVIDAD_PROMOTORES, "FORM.ID_FORMATO_ACTIVIDAD = PROM.ID_FORMATO_ACTIVIDAD")
 		.join(SVC_VELATORIO, "FORM.ID_VELATORIO = SV.ID_VELATORIO");
 		queryUtil.where(ESTATUS_REGISTRO).and(ESTATUS_FORMATO).and
-		("FORM.ID_FORMATO_ACTIVIDAD = " +Integer.parseInt(palabra));
+		("FORM.ID_FORMATO_ACTIVIDAD = " +palabra);
 		String query = obtieneQuery(queryUtil);
 		log.info("formato "+query);
 		String encoded = encodedQuery(query);
@@ -290,9 +283,9 @@ public class RegistrarActividad {
 		DatosRequest request = new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
 		final QueryHelper q = new QueryHelper("UPDATE SVT_ACTIVIDAD_PROMOTORES");	
-		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO+ "", "!IND_ACTIVO");
-		q.agregarParametroValues("ID_USUARIO_BAJA", "" +idUsuario+ "");
-		q.agregarParametroValues("FEC_BAJA", "" +AppConstantes.CURRENT_TIMESTAMP + "");
+		q.agregarParametroValues(AppConstantes.IND_ACTIVO, "!IND_ACTIVO");
+		q.agregarParametroValues("ID_USUARIO_BAJA", idUsuario.toString());
+		q.agregarParametroValues("FEC_BAJA", AppConstantes.CURRENT_TIMESTAMP);
 			q.addWhere("ID_REGISTRO_ACTIVIDAD = " +idActividad);
 		String query = q.obtenerQueryActualizar();
 		log.info("ELIMINAR: " +query);
@@ -329,10 +322,10 @@ public class RegistrarActividad {
 		Map<String, Object> envioDatos = new HashMap<>();
 		StringBuilder condition= new StringBuilder();
 		if(reporte.getIdDelegacion()!=null) {
-			condition.append(" AND SV.ID_DELEGACION= "+reporte.getIdDelegacion()+"");
+			condition.append(" AND SV.ID_DELEGACION= "+reporte.getIdDelegacion());
 		}
 	    if(reporte.getIdVelatorio()!=null) {
-			condition.append(" AND SV.ID_VELATORIO = "+reporte.getIdVelatorio()+"");
+			condition.append(" AND SV.ID_VELATORIO = "+reporte.getIdVelatorio());
 		}
 	    if(reporte.getFolio()!=null) {
 			condition.append(" AND FORM.REF_FOLIO = '"+reporte.getFolio()+"'");

@@ -76,7 +76,7 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 	
 	
 	@Override
-	public Response<?> buscarFormatoActividades(DatosRequest request, Authentication authentication) throws IOException, ParseException {
+	public Response<Object> buscarFormatoActividades(DatosRequest request, Authentication authentication) throws IOException, ParseException {
 		GestionarPromotorImpl prom = new GestionarPromotorImpl();
 		String datosJson = String.valueOf(request.getDatos().get("datos"));
 		FiltrosPromotorActividadesRequest filtros = gson.fromJson(datosJson, FiltrosPromotorActividadesRequest.class);
@@ -91,7 +91,7 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 	    	if(filtros.getFecFin()!=null) {
 	    		registrarActividad.setFecFin(prom.formatFecha(filtros.getFecFin()));
 	    	}
-	    	Response<?> response = providerRestTemplate.consumirServicio(registrarActividad.buscarFormatoActividades(request, filtros, fecFormat).getDatos(), urlPaginado,
+	    	Response<Object> response = providerRestTemplate.consumirServicio(registrarActividad.buscarFormatoActividades(request, filtros, fecFormat).getDatos(), urlPaginado,
 				authentication);
 	        if(response.getDatos().toString().contains("id")) {
 	        	logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"CONSULTA FORMATO REGISTRO DE ACTIVIDADES OK", CONSULTA, authentication, usuario);
@@ -106,10 +106,10 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 
 
 	@Override
-	public Response<?> agregarRegistroActividades(DatosRequest request, Authentication authentication)
+	public Response<Object> agregarRegistroActividades(DatosRequest request, Authentication authentication)
 			throws IOException, ParseException {
 		GestionarPromotorImpl prom = new GestionarPromotorImpl();
-		Response<?> response = new Response<>();
+		Response<Object> response = new Response<>();
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
 		RegistrarFormatoActividadesRequest actividadesRequest =  gson.fromJson(datosJson, RegistrarFormatoActividadesRequest.class);	
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
@@ -138,7 +138,7 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 					logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"FORMATO DE ACTIVIDADES REGISTRADO CORRECTAMENTE", ALTA, authentication, usuario);
 					if(response.getCodigo()==200) {
 					Integer idFormato = Integer.parseInt(response.getDatos().toString());
-					Response<?> responseActividad = providerRestTemplate.consumirServicio(registrarActividad.insertarActividad(actividadesRequest.getActividades(), actividadesRequest.getIdFormato(), idFormato).getDatos(), urlInsertarMultiple, authentication);
+					Response<Object> responseActividad = providerRestTemplate.consumirServicio(registrarActividad.insertarActividad(actividadesRequest.getActividades(), actividadesRequest.getIdFormato(), idFormato).getDatos(), urlInsertarMultiple, authentication);
 					 logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"REGISTRO AGREGADO CORRECTAMENTE", ALTA, authentication, usuario);
 					if(responseActividad.getCodigo()==200) {
 						responseActividad = response;
@@ -162,10 +162,10 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 	
 
 	@Override
-	public Response<?> detalleFormatoActividades(DatosRequest request, Authentication authentication)
+	public Response<Object> detalleFormatoActividades(DatosRequest request, Authentication authentication)
 			throws IOException {
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-		 Response<?> response = MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(registrarActividad.datosFormato(request, fecFormat).getDatos(), urlConsulta,
+		 Response<Object> response = MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(registrarActividad.datosFormato(request, fecFormat).getDatos(), urlConsulta,
 					authentication), EXITO);   
 	        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),
 					this.getClass().getPackage().toString(), "Consulta formato Ok", CONSULTA, authentication, usuario);
@@ -174,14 +174,14 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 	
 	
 	@Override
-	public Response<?> detalleActividades(DatosRequest request, Authentication authentication)
+	public Response<Object> detalleActividades(DatosRequest request, Authentication authentication)
 			throws IOException {
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		String palabra = request.getDatos().get("palabra").toString();
 		Integer idFormato = Integer.parseInt(palabra);
 		Integer pagina = Integer.valueOf(Integer.parseInt(request.getDatos().get("pagina").toString()));
         Integer tamanio = Integer.valueOf(Integer.parseInt(request.getDatos().get("tamanio").toString()));
-        Response<?> response = MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(registrarActividad.verDetalleActividades(request, idFormato, pagina, tamanio, fecFormat).getDatos(), urlPaginado,
+        Response<Object> response = MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(registrarActividad.verDetalleActividades(request, idFormato, pagina, tamanio, fecFormat).getDatos(), urlPaginado,
 				authentication), EXITO);   
         logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),
 				this.getClass().getPackage().toString(), "Consulta actividades Ok", CONSULTA, authentication, usuario);
@@ -189,7 +189,7 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 	}
 	
 	private boolean validarDias(Integer idActividad, Authentication authentication) throws IOException {
-		Response<?> response= providerRestTemplate.consumirServicio(registrarActividad.buscarFormato(idActividad).getDatos(), urlConsulta,
+		Response<Object> response= providerRestTemplate.consumirServicio(registrarActividad.buscarFormato(idActividad).getDatos(), urlConsulta,
 				authentication);
 		if (response.getCodigo()==200){
 			Object rst=response.getDatos();
@@ -199,11 +199,11 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 	}
 
 	@Override
-	public Response<?> eliminarActividad(DatosRequest request, Authentication authentication) throws IOException {
+	public Response<Object> eliminarActividad(DatosRequest request, Authentication authentication) throws IOException {
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
 		FiltrosPromotorActividadesRequest filtros =  gson.fromJson(datosJson, FiltrosPromotorActividadesRequest.class);	
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-		Response<?> response= MensajeResponseUtil.mensajeResponse(providerRestTemplate.consumirServicio(registrarActividad.eliminarActividad(filtros.getIdActividad(), usuario.getIdUsuario()).getDatos(), urlActualizar,
+		Response<Object> response= MensajeResponseUtil.mensajeResponseObject(providerRestTemplate.consumirServicio(registrarActividad.eliminarActividad(filtros.getIdActividad(), usuario.getIdUsuario()).getDatos(), urlActualizar,
 				authentication), EXITO);
 		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"REGISTRO ELIMINADO CORRECTAMENTE", BAJA, authentication, usuario);
 		return response;
@@ -211,8 +211,8 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 
 
 	@Override
-	public Response<?> catalogos(DatosRequest request, Authentication authentication) throws IOException {
-		Response<?> response;
+	public Response<Object> catalogos(DatosRequest request, Authentication authentication) throws IOException {
+		Response<Object> response;
 		String datosJson = String.valueOf(request.getDatos().get("datos"));
 		FiltrosPromotorActividadesRequest filtros = gson.fromJson(datosJson, FiltrosPromotorActividadesRequest.class);
 	    	UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
@@ -230,13 +230,13 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 
 
 	@Override
-	public Response<?> descargarReporteActividades(DatosRequest request, Authentication authentication)
+	public Response<Object> descargarReporteActividades(DatosRequest request, Authentication authentication)
 			throws IOException, ParseException {
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		ReporteDto reporte= gson.fromJson(datosJson, ReporteDto.class);
 		Map<String, Object> envioDatos = new RegistrarActividad().reporteActividades(reporte, reporteActiv);
-		Response<?> response = providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes,
+		Response<Object> response = providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes,
 				authentication);
 		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"SE GENERO CORRECRAMENTE EL REPORTE DE ACTIVIDADES", IMPRIMIR, authentication, usuario);
 		return response;
@@ -244,14 +244,14 @@ public class RegistrarActividadImpl implements RegistrarActividadService {
 
 
 	@Override
-	public Response<?> generarFormato(DatosRequest request, Authentication authentication) throws IOException {
+	public Response<Object> generarFormato(DatosRequest request, Authentication authentication) throws IOException {
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		ReporteDto reporte= gson.fromJson(datosJson, ReporteDto.class);
 		reporte.setIdRol(usuario.getIdRol());
 		reporte.setIdVelatorio(usuario.getIdVelatorio());
 		Map<String, Object> envioDatos = new RegistrarActividad().formatoActividades(reporte, anexo);
-		Response<?> response = providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes,
+		Response<Object> response = providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes,
 				authentication);
 		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"SE GENERO CORRECRAMENTE EL REPORTE DE ACTIVIDADES", IMPRIMIR, authentication, usuario);
 		return response;

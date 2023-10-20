@@ -3,6 +3,7 @@ package com.imss.sivimss.promotores.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class MensajeResponseUtil {
 	
 	private static final Logger log = LoggerFactory.getLogger(MensajeResponseUtil.class);
@@ -23,10 +24,21 @@ public class MensajeResponseUtil {
 		return respuestaGenerado;
 	}
 	
-	public  static Response<?>mensajeConsultaResponse(Response<?> respuestaGenerado, String numeroMensaje) {
+	public  static Response<Object>mensajeConsultaResponse(Response<Object> respuestaGenerado, String numeroMensaje) {
 		Integer codigo = respuestaGenerado.getCodigo();
 		if (codigo == 200 &&  (!respuestaGenerado.getDatos().toString().contains("id"))){
 			respuestaGenerado.setMensaje(numeroMensaje);
+		}
+		return respuestaGenerado;
+	}
+	
+	public static Response<Object> mensajeResponseObject(Response<Object> respuestaGenerado, String numeroMensaje) {
+		Integer codigo = respuestaGenerado.getCodigo();
+		if (codigo == 200) {
+			respuestaGenerado.setMensaje(numeroMensaje);
+		} else {
+			log.error("Error.. {}", respuestaGenerado.getMensaje());
+			respuestaGenerado.setMensaje("5");
 		}
 		return respuestaGenerado;
 	}

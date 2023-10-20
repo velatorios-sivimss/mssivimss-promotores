@@ -39,8 +39,8 @@ public class GestionarPromotorController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
     @PostMapping("/buscar")
-	public CompletableFuture<?> catalogoPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response = gestionarPromotoresService.mostrarCatalogo(request,authentication);
+	public CompletableFuture<Object> catalogoPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+		Response<Object> response = gestionarPromotoresService.mostrarCatalogo(request,authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
@@ -49,9 +49,9 @@ public class GestionarPromotorController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
     @PostMapping("/detalle")
-	public CompletableFuture<?> detallePromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+	public CompletableFuture<Object> detallePromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
 	
-		Response<?> response = gestionarPromotoresService.verDetalle(request,authentication);
+		Response<Object> response = gestionarPromotoresService.verDetalle(request,authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
       
@@ -61,8 +61,8 @@ public class GestionarPromotorController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	@PostMapping("/agregar")
-	public CompletableFuture<?> insertarPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException, ParseException{
-		Response<?> response = gestionarPromotoresService.agregarPromotor(request,authentication);
+	public CompletableFuture<Object> insertarPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException, ParseException{
+		Response<Object> response = gestionarPromotoresService.agregarPromotor(request,authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
       
@@ -72,8 +72,8 @@ public class GestionarPromotorController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	@PostMapping("/modificar")
-	public CompletableFuture<?> modificarPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException, ParseException {
-		Response<?> response = gestionarPromotoresService.actualizarPromotor(request,authentication);
+	public CompletableFuture<Object> modificarPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException, ParseException {
+		Response<Object> response = gestionarPromotoresService.actualizarPromotor(request,authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
       
@@ -83,8 +83,8 @@ public class GestionarPromotorController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	@PostMapping("/cambiar-estatus")
-	public CompletableFuture<?> cambiarEstatusPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response = gestionarPromotoresService.cambiarEstatus(request,authentication);
+	public CompletableFuture<Object> cambiarEstatusPromotor(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+		Response<Object> response = gestionarPromotoresService.cambiarEstatus(request,authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
       
@@ -94,8 +94,8 @@ public class GestionarPromotorController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	@PostMapping("/catalogo-promotores")
-	public CompletableFuture<?> buscarPromotorPorNombre(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response = gestionarPromotoresService.buscarPorNombre(request,authentication);
+	public CompletableFuture<Object> buscarPromotorPorNombre(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+		Response<Object> response = gestionarPromotoresService.buscarPorNombre(request,authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
       
@@ -106,21 +106,21 @@ public class GestionarPromotorController {
 	 * 
 	 * @return respuestas
 	 */
-	private CompletableFuture<?> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
+	private CompletableFuture<Object> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
 			CallNotPermittedException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
-	private CompletableFuture<?> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
+	private CompletableFuture<Object> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
 			RuntimeException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
-	private CompletableFuture<?> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
+	private CompletableFuture<Object> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
 			NumberFormatException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
 		return CompletableFuture

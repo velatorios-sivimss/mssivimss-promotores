@@ -77,7 +77,7 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 	private ModelMapper modelMapper;
 	
 	@Override
-	public Response<?> mostrarCatalogo(DatosRequest request, Authentication authentication) throws IOException {
+	public Response<Object> mostrarCatalogo(DatosRequest request, Authentication authentication) throws IOException {
 		String datosJson = String.valueOf(request.getDatos().get("datos"));
 		FiltrosPromotorRequest filtros = gson.fromJson(datosJson, FiltrosPromotorRequest.class);
 		 Integer pagina = Integer.valueOf(Integer.parseInt(request.getDatos().get("pagina").toString()));
@@ -85,20 +85,20 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 	        filtros.setTamanio(tamanio.toString());
 	        filtros.setPagina(pagina.toString());
 	    	UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-	        Response<?> response = providerRestTemplate.consumirServicio(promotores.catalogoPromotores(request, filtros, fecFormat).getDatos(), urlPaginado,
+	        Response<Object> response = providerRestTemplate.consumirServicio(promotores.catalogoPromotores(request, filtros, fecFormat).getDatos(), urlPaginado,
 				authentication);
 	        logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"CONSULTA CONTRATANTES OK", CONSULTA, authentication, usuario);
 		return response;
 	}
 	
 	@Override
-	public Response<?> verDetalle(DatosRequest request, Authentication authentication) throws IOException {
+	public Response<Object> verDetalle(DatosRequest request, Authentication authentication) throws IOException {
 		String palabra = request.getDatos().get("palabra").toString();
 		List<PromotorResponse> detallePromotorResponse;
 		List<DiasDescansoModel> promotorDescansos;
 		PromotorResponse promoResponse;
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-		Response<?> response= MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(promotores.detalle(request, palabra, fecFormat).getDatos(), urlConsulta,
+		Response<Object> response= MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(promotores.detalle(request, palabra, fecFormat).getDatos(), urlConsulta,
 				authentication), EXITO);
 		if(response.getCodigo()==200) {
 			detallePromotorResponse = Arrays.asList(modelMapper.map(response.getDatos(), PromotorResponse[].class));
@@ -116,8 +116,8 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 	
 	
 	@Override
-	public Response<?> agregarPromotor(DatosRequest request, Authentication authentication) throws IOException, ParseException {
-		Response<?> response = new Response<>();
+	public Response<Object> agregarPromotor(DatosRequest request, Authentication authentication) throws IOException, ParseException {
+		Response<Object> response = new Response<>();
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
 		PromotorRequest promoRequest = gson.fromJson(datosJson, PromotorRequest.class);	
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
@@ -125,7 +125,6 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 		    promotores.setFecIngreso(formatFecha(promoRequest.getFecIngreso()));
 		    promotores.setFecNacimiento(formatFecha(promoRequest.getFecNac()));
 			promotores.setIdUsuario(usuario.getIdUsuario());
-	
 			if(validarCurp(promoRequest.getCurp(), authentication)) {
 				logUtil.crearArchivoLog(Level.WARNING.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"EL PROMOTOR QUE DESEAS INGRESAR YA SE ENCUENTRA REGISTRADO EN EL SISTEMA.", ALTA, authentication, usuario);
 				response.setCodigo(200);
@@ -158,7 +157,7 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 	
 
 	@Override
-	public Response<?> actualizarPromotor(DatosRequest request, Authentication authentication) throws IOException, ParseException {
+	public Response<Object> actualizarPromotor(DatosRequest request, Authentication authentication) throws IOException, ParseException {
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		PromotorRequest promoRequest = gson.fromJson( String.valueOf(request.getDatos().get(AppConstantes.DATOS)), PromotorRequest.class);
 		if (promoRequest.getIdPromotor() == null) {
@@ -169,7 +168,7 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 		promotores.setIdUsuario(usuario.getIdUsuario());
 		try {
 			if(promoRequest.getFecPromotorDiasDescanso().isEmpty()) {
-				Response<?> response =  providerRestTemplate.consumirServicio(promotores.actualizarPromotor(promoRequest).getDatos(), urlActualizar, authentication);
+				Response<Object> response =  providerRestTemplate.consumirServicio(promotores.actualizarPromotor(promoRequest).getDatos(), urlActualizar, authentication);
 				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"PROMOTOR MODIFICADO CORRECTAMENTE", MODIFICACION, authentication, usuario);
 				if(response.getCodigo()==200) {
 					 providerRestTemplate.consumirServicio(promotores.bajaDescansos(promoRequest.getIdPromotor()).getDatos(), urlActualizar, authentication);
@@ -178,7 +177,7 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 				return response;
 			}else {
 				
-				Response<?> response = providerRestTemplate.consumirServicio(promotores.actualizarPromotor(promoRequest).getDatos(), urlInsertarMultiple,
+				Response<Object> response = providerRestTemplate.consumirServicio(promotores.actualizarPromotor(promoRequest).getDatos(), urlInsertarMultiple,
 					 authentication);
 				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"PROMOTOR MODIFICADO CORRECTAMENTE", MODIFICACION, authentication, usuario);
 				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"DIAS DE DESCANSOS AGREGADOS CORRECTAMENTE", ALTA, authentication, usuario);
@@ -196,7 +195,7 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 
 	
 	@Override
-	public Response<?> cambiarEstatus(DatosRequest request, Authentication authentication) throws IOException {
+	public Response<Object> cambiarEstatus(DatosRequest request, Authentication authentication) throws IOException {
 		UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		PromotorRequest promotor = gson.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), PromotorRequest.class);
 		
@@ -204,7 +203,7 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 		}
 		promotores.setIdUsuario(usuario.getIdUsuario());
-		Response<?> response =  MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(promotores.cambiarEstatus(promotor).getDatos(), urlActualizar,
+		Response<Object> response =  MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(promotores.cambiarEstatus(promotor).getDatos(), urlActualizar,
 				authentication), EXITO);
 		if(promotor.getEstatus()==1) {
 			logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"ACTIVADO CORRECTAMENTE", MODIFICACION, authentication, usuario);
@@ -216,7 +215,7 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 
 	
 	private boolean validarCurp(String curp, Authentication authentication) throws IOException {
-		Response<?> response= MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(promotores.buscarCurp(curp).getDatos(), urlConsulta,
+		Response<Object> response= MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(promotores.buscarCurp(curp).getDatos(), urlConsulta,
 				authentication), EXITO);
 			Object rst=response.getDatos();
 			return !rst.toString().equals("[]");	
@@ -224,8 +223,8 @@ public class GestionarPromotorImpl implements GestionarPromotorService{
 	}
 	
 		@Override
-		public Response<?> buscarPorNombre(DatosRequest request, Authentication authentication) throws IOException {
-			Response<?> response;
+		public Response<Object> buscarPorNombre(DatosRequest request, Authentication authentication) throws IOException {
+			Response<Object> response;
 			String datosJson = String.valueOf(request.getDatos().get("datos"));
 			FiltrosPromotorRequest filtros = gson.fromJson(datosJson, FiltrosPromotorRequest.class);
 		    	UsuarioDto usuario = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);

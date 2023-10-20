@@ -456,5 +456,6 @@ public class GestionarPromotor {
         }else {
             return "'"+valor+"'";
         }
+        
     }
 }

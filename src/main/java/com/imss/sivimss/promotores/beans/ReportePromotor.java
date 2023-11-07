@@ -44,7 +44,7 @@ public class ReportePromotor {
 		}
     	
     	if (Objects.nonNull(comisionesPromotorDto.getOds())) {
-			query.append(" AND SOS.CVE_FOLIO = ".concat(comisionesPromotorDto.getOds()));
+			query.append(" AND SOS.CVE_FOLIO = '".concat(comisionesPromotorDto.getOds().concat("'")));
 		}
 
     	/*

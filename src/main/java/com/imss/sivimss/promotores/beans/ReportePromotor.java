@@ -56,7 +56,7 @@ public class ReportePromotor {
     	}
     	
     	if (Objects.nonNull(comisionesPromotorDto.getId_delegacion())) {
-    		query.append(" AND SPO.ID_DELEGACION = ".concat(comisionesPromotorDto.getId_delegacion().toString()));
+    		query.append(" AND SD.ID_DELEGACION = ".concat(comisionesPromotorDto.getId_delegacion().toString()));
     	}
     	params.put("consultaOrdenes", query.toString());
     	params.put("periodo", comisionesPromotorDto.getMes()+"/"+comisionesPromotorDto.getAnio());
